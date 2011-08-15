@@ -1,14 +1,14 @@
 =Cassandra
-The Apache Cassandra Project develops a highly scalable second-generation distributed database, bringing together Dynamo's fully distributed design and Bigtable's ColumnFamily-based data model.
+The Apache Cassandra Project (http://cassandra.apache.org) develops a highly scalable second-generation distributed database, bringing together Dynamo's fully distributed design and Bigtable's ColumnFamily-based data model.
 
 =CQL
 Cassandra originally went with a Thrift RPC-based API as a way to provide a common denominator that more idiomatic clients could build upon independently.
-However, this worked poorly in practice: raw Thrift is too low-level to use productively, and keeping pace with new API methods to support (for example) indexes in 0.7 or distributed counters in 0.8 is too much for many maintainers to keep pace with.
+However, this worked poorly in practice: raw Thrift is too low-level to use productively, and keeping pace with new API methods to support (for example) indexes in 0.7 or distributed counters in 0.8 is too much for many maintainers.
 
 CQL, the Cassandra Query Language, addresses this by pushing all implementation details to the server; all the client has to know for any operation is how to interpret "resultset" objects.
 So adding a feature like counters just requires teaching the CQL parser to understand "column + N" notation; no client-side changes are necessary.
 
-(source:  http://www.datastax.com/dev/blog/what’s-new-in-cassandra-0-8-part-1-cql-the-cassandra-query-language)
+(CQL Specification: https://github.com/apache/cassandra/blob/trunk/doc/cql/CQL.textile)
 
 =Quick Start
 
