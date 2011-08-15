@@ -1,0 +1,2 @@
+--- !ruby/object:CassandraThrift::CqlResult 
+type: 2

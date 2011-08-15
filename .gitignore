@@ -1,0 +1,7 @@
+pkg/*
+*.gem
+.bundle
+coverage
+.DS_Store
+.rspec-tm
+doc
