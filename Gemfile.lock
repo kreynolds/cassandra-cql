@@ -2,8 +2,8 @@ PATH
   remote: .
   specs:
     cassandra-cql (0.0.1)
-      cassandra-thrift (>= 0.0.1)
       simple_uuid (>= 0.1.1)
+      thrift_client (>= 0.6.3)
 
 GEM
   remote: http://rubygems.org/
@@ -18,7 +18,7 @@ GEM
     rspec-expectations (2.6.0)
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.6.0)
-    simple_uuid (0.1.1)
+    simple_uuid (0.1.2)
     thrift (0.6.0)
     thrift_client (0.6.3)
       thrift (~> 0.6.0)
@@ -32,3 +32,4 @@ DEPENDENCIES
   rcov (>= 0.9.9)
   rspec (>= 2.6.0)
   simple_uuid (>= 0.1.1)
+  thrift_client (>= 0.6.3)
