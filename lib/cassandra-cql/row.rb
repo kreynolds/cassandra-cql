@@ -35,7 +35,7 @@ module CassandraCQL
     end
   
     def key
-      @row.columns[0].value
+      ColumnFamily.cast(@row.key, @column_family.key_validation_class)
     end
   end
 end
