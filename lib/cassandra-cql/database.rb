@@ -12,7 +12,7 @@ module CassandraCQL
       }.merge(options)
 
       @thrift_client_options = {
-        :exception_classes_without_disconnect => CassandraThrift::InvalidRequestException
+        :exception_class_overrides => CassandraThrift::InvalidRequestException
       }.merge(thrift_client_options)
 
       @keyspace = @options[:keyspace]
