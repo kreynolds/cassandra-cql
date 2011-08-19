@@ -14,7 +14,13 @@ module CassandraCQL
     end
 
     def column_names
-      @names ||= @row.columns.map { |column| ColumnFamily.cast(column.name, @column_family.comparator_type) }
+      @names ||= @row.columns.map do |column|
+        if column.name == @column_family.key_alias
+          column.name
+        else
+          ColumnFamily.cast(column.name, @column_family.comparator_type)
+        end
+      end
     end
   
     def column_values
