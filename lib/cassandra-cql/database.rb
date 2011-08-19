@@ -57,7 +57,7 @@ module CassandraCQL
       end
     end
 
-    def execute(statement, *bind_vars)
+    def execute(statement, *bind_vars, &block)
       result = Statement.new(self, statement).execute(bind_vars)
       if block_given?
         yield result
