@@ -43,12 +43,12 @@ So adding a feature like counters just requires teaching the CQL parser to under
   db.execute("INSERT INTO users (id, email) VALUES ('kreynolds', 'kelley@insidesystems.net')")
   
   # Insert with bound variables
-  db.execute("INSERT INTO users (id, email) VALUES (?, ?)", ['kway', 'kevin@insidesystems.net'])
+  db.execute("INSERT INTO users (id, email) VALUES (?, ?)", 'kway', 'kevin@insidesystems.net')
   
 ==Updating a Column Family
 
   # Update
-  db.execute("UPDATE users SET email=? WHERE id=?", ['kreynolds@insidesystems.net', 'kreynolds'])
+  db.execute("UPDATE users SET email=? WHERE id=?", 'kreynolds@insidesystems.net', 'kreynolds')
   
 ==Selecting from a Column Family
 
@@ -58,17 +58,17 @@ So adding a feature like counters just requires teaching the CQL parser to under
     {"id"=>"kreynolds", "email"=>"kreynolds@insidesystems.net"}
   
   # Select just one user by id
-  db.execute("SELECT * FROM users WHERE id=?", ['kreynolds']).fetch { |row| puts row.to_hash.inspect }
+  db.execute("SELECT * FROM users WHERE id=?", 'kreynolds').fetch { |row| puts row.to_hash.inspect }
     {"id"=>"kreynolds", "email"=>"kreynolds@insidesystems.net"}
 
   # Select just one user by indexed column
-  db.execute("SELECT * FROM users WHERE email=?", ['kreynolds@insidesystems.net']).fetch { |row| puts row.to_hash.inspect }
+  db.execute("SELECT * FROM users WHERE email=?", 'kreynolds@insidesystems.net').fetch { |row| puts row.to_hash.inspect }
     {"id"=>"kreynolds", "email"=>"kreynolds@insidesystems.net"}
   
 ==Deleting from a Column Family
 
   # Delete the swarthy bastard Kevin
-  db.execute("DELETE FROM users WHERE id=?", ['kway'])
+  db.execute("DELETE FROM users WHERE id=?", 'kway')
   
 =TODO
 
