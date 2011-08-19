@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "bundler", ">= 1.0.0"
   s.add_development_dependency "rcov", ">= 0.9.9"
   s.add_development_dependency "rspec", ">= 2.6.0"
+  s.add_development_dependency "rake", ">= 0.9.2"
   s.add_dependency "simple_uuid", ">= 0.1.1"
   s.add_dependency "thrift_client", ">= 0.6.3"
 
