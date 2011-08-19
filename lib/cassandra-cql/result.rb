@@ -52,7 +52,7 @@ module CassandraCQL
       end
     end
 
-    def fetch(&block)
+    def fetch
       if block_given?
         while row = fetch_row
           yield row
@@ -62,7 +62,7 @@ module CassandraCQL
       end
     end
 
-    def fetch_hash(&block)
+    def fetch_hash
       if block_given?
         while row = fetch_row
           if row.kind_of?(Fixnum)
@@ -80,7 +80,7 @@ module CassandraCQL
       end
     end
   
-    def fetch_array(&block)
+    def fetch_array
       if block_given?
         while row = fetch_row
           if row.kind_of?(Fixnum)
