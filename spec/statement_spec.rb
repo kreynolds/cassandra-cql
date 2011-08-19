@@ -13,56 +13,65 @@ end
 
 describe "execute" do
   context "when performing keyspace operations" do
+    let(:cql_result) { yaml_fixture(:result_for_void_operations) }
     let(:handle) {
       handle = double("Database")
       handle.should_receive(:update_schema!)
+      handle.stub(:execute_cql_query) { cql_result }
       handle
     }
 
     it "should set keyspace without compression" do
       handle.should_receive(:execute_cql_query).with("use keyspace1", CassandraThrift::Compression::NONE)
       handle.should_receive(:keyspace=).with("keyspace1")
-      Statement.new(handle, "use keyspace1").execute
+      Statement.new(handle, "use keyspace1").execute.should be_nil
     end
 
     it "should set keyspace with compression" do
       handle.should_receive(:execute_cql_query).with("x^+-NU\310N\255,.HLN5\004\000#\275\004\364", CassandraThrift::Compression::GZIP)
       handle.should_receive(:keyspace=).with("keyspace1")
-      Statement.new(handle, "use keyspace1").execute([], {:compression => true})
+      Statement.new(handle, "use keyspace1").execute([], {:compression => true}).should be_nil
     end
     
     it "should set keyspace to nil when deleting keyspace" do
       handle.should_receive(:execute_cql_query).with("drop keyspace keyspace1", CassandraThrift::Compression::NONE)
       handle.should_receive(:keyspace=).with(nil)
-      Statement.new(handle, "drop keyspace keyspace1").execute
+      Statement.new(handle, "drop keyspace keyspace1").execute.should be_nil
     end
   end
   
   context "when performing schema operations" do
+    let(:cql_result) { yaml_fixture(:result_for_void_operations) }
     let(:handle) {
       handle = double("Database")
       handle.should_receive(:update_schema!)
+      handle.stub(:execute_cql_query) { cql_result }
       handle
     }
 
     it "should update_schema when creating a column family" do
       handle.should_receive(:execute_cql_query).with("create columnfamily test_cf", CassandraThrift::Compression::NONE)
-      Statement.new(handle, "create columnfamily test_cf").execute
+      Statement.new(handle, "create columnfamily test_cf").execute.should be_nil
     end
 
     it "should update_schema when altering a column family" do
       handle.should_receive(:execute_cql_query).with("alter columnfamily test_cf", CassandraThrift::Compression::NONE)
-      Statement.new(handle, "alter columnfamily test_cf").execute
+      Statement.new(handle, "alter columnfamily test_cf").execute.should be_nil
     end
 
     it "should update_schema when dropping a column family" do
       handle.should_receive(:execute_cql_query).with("drop columnfamily test_cf", CassandraThrift::Compression::NONE)
-      Statement.new(handle, "drop columnfamily test_cf").execute
+      Statement.new(handle, "drop columnfamily test_cf").execute.should be_nil
     end
   end
   
   context "when performing result-returning column_family operations" do
-    let(:handle) { double("Database") }
+    let(:cql_result) { yaml_fixture(:result_for_standard_with_validations) }
+    let(:handle) {
+      handle = double("Database")
+      handle.stub(:execute_cql_query) { cql_result }
+      handle
+    }
     let(:schema) { double("Schema") }
     it "should set the column family when selecting" do
       schema = double("Schema")
@@ -77,23 +86,25 @@ describe "execute" do
   end
   
   context "when performing void-returning column_family operations" do
-    let(:handle) { double("Database") }
+    let(:cql_result) { yaml_fixture(:result_for_void_operations) }
+    let(:handle) {
+      handle = double("Database")
+      handle.stub(:execute_cql_query) { cql_result }
+      handle
+    }
     it "should have a nil column family when inserting" do
       handle.should_receive(:execute_cql_query).with("insert into NodeIdInfo (column1) values ('foo')", CassandraThrift::Compression::NONE)
-      result = Statement.new(handle, "insert into NodeIdInfo (column1) values ('foo')").execute
-      result.column_family.should be_nil
+      Statement.new(handle, "insert into NodeIdInfo (column1) values ('foo')").execute.should be_nil
     end
 
     it "should have a nil column family when updating" do
       handle.should_receive(:execute_cql_query).with("update NodeIdInfo set column1='foo'", CassandraThrift::Compression::NONE)
-      result = Statement.new(handle, "update NodeIdInfo set column1='foo'").execute
-      result.column_family.should be_nil
+      Statement.new(handle, "update NodeIdInfo set column1='foo'").execute.should be_nil
     end
 
     it "should have a nil column family when deleting" do
       handle.should_receive(:execute_cql_query).with("delete from column_family where key='whatever'", CassandraThrift::Compression::NONE)
-      result = Statement.new(handle, "delete from column_family where key='whatever'").execute
-      result.column_family.should be_nil
+      Statement.new(handle, "delete from column_family where key='whatever'").execute.should be_nil
     end
   end
 end
