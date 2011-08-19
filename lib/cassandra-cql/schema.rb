@@ -61,9 +61,8 @@ module CassandraCQL
     
     def self.cast(value, type)
       case type
-      # TODO: This could optimized with some updates to simpleuuid, it's pretty obscure
       when "org.apache.cassandra.db.marshal.TimeUUIDType"
-        Time.at(SimpleUUID::UUID.new(value).send(:total_usecs) / 1000000.0)
+        SimpleUUID::UUID.to_time(value)
       when "org.apache.cassandra.db.marshal.UUIDType"
         SimpleUUID::UUID.new(value)
       when "org.apache.cassandra.db.marshal.IntegerType"
