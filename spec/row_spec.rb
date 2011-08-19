@@ -7,6 +7,10 @@ describe "basic methods" do
   let(:cql_result_row) { yaml_fixture(:result_for_standard_with_validations).rows[0] }
   let(:row) { Row.new(cql_result_row, column_family) }
 
+  let(:cf_time_uuid_comp) { ColumnFamily.new(yaml_fixture(:standard_column_family)) }
+  let(:cql_result_time_uuid_row) { yaml_fixture(:result_for_timeuuid).rows[0] }
+  let(:row_time_uuid) { Row.new(cql_result_time_uuid_row, cf_time_uuid_comp) }
+
   context "initialize" do
     it "should set row and column_family" do
       row.row.should eq(cql_result_row)
@@ -46,6 +50,10 @@ describe "basic methods" do
 
     it "should return a String for default_column" do
       row['default_column'].should be_kind_of(String)
+    end
+
+    it "should not crash when getting the row key name from column names" do
+      lambda { row_time_uuid.column_names }.should_not raise_error
     end
   end
   

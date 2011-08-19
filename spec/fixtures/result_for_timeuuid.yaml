@@ -1,0 +1,17 @@
+--- !ruby/object:CassandraThrift::CqlResult
+rows:
+- !ruby/object:CassandraThrift::CqlRow
+  columns:
+  - !ruby/object:CassandraThrift::Column
+    name: KEY
+    timestamp: -1
+    value: incinerators-councils
+  - !ruby/object:CassandraThrift::Column
+    name: !binary |
+      tAeA9KciEeCFVRy7npxYoA==
+
+    timestamp: 1313700445148
+    value: Olympiad-bayonet
+  key: incinerators-councils
+
+type: 1
