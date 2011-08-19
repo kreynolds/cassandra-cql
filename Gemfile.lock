@@ -9,6 +9,7 @@ GEM
   remote: http://rubygems.org/
   specs:
     diff-lcs (1.1.2)
+    rake (0.9.2)
     rcov (0.9.9)
     rspec (2.6.0)
       rspec-core (~> 2.6.0)
@@ -22,6 +23,7 @@ GEM
     thrift (0.6.0)
     thrift_client (0.6.3)
       thrift (~> 0.6.0)
+    yard (0.7.2)
 
 PLATFORMS
   ruby
@@ -29,7 +31,7 @@ PLATFORMS
 DEPENDENCIES
   bundler (>= 1.0.0)
   cassandra-cql!
+  rake (>= 0.9.2)
   rcov (>= 0.9.9)
   rspec (>= 2.6.0)
-  simple_uuid (>= 0.1.1)
-  thrift_client (>= 0.6.3)
+  yard (>= 0.7.2)
