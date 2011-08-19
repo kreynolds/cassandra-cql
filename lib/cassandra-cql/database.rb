@@ -56,8 +56,8 @@ module CassandraCQL
         stmt
       end
     end
-    
-    def execute(statement, bind_vars=[], &block)
+
+    def execute(statement, *bind_vars)
       result = Statement.new(self, statement).execute(bind_vars)
       if block_given?
         yield result
@@ -67,7 +67,7 @@ module CassandraCQL
     rescue CassandraThrift::InvalidRequestException
       raise Error::InvalidRequestException.new($!.why)
     end
-  
+
     def execute_cql_query(cql, compression=CassandraThrift::Compression::NONE)
       @connection.execute_cql_query(cql, compression)
     rescue CassandraThrift::InvalidRequestException
