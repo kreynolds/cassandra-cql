@@ -87,7 +87,7 @@ module CassandraCQL
         obj.to_guid
       # There are corner cases where this is an invalid assumption but they are extremely rare.
       # The alternative is to make the user pack the data on their own .. let's not do that until we have to
-      elsif obj.kind_of?(String) and obj.is_binary_data?
+      elsif obj.kind_of?(String) and Utility.binary_data?(obj)
         escape(obj.unpack('H*')[0])
       else
         escape(obj.to_s)
