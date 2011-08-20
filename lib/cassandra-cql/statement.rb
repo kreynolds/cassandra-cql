@@ -29,7 +29,7 @@ module CassandraCQL
       end
 
       if options[:compression]
-        res = Result.new(@handle.execute_cql_query(CassandraCQL::Utility.compress(self.class.sanitize(@statement, bind_vars)), CassandraThrift::Compression::GZIP), column_family)
+        res = Result.new(@handle.execute_cql_query(Utility.compress(self.class.sanitize(@statement, bind_vars)), CassandraThrift::Compression::GZIP), column_family)
       else
         res = Result.new(@handle.execute_cql_query(self.class.sanitize(@statement, bind_vars), CassandraThrift::Compression::NONE), column_family)
       end
@@ -82,8 +82,8 @@ module CassandraCQL
       elsif obj.kind_of?(Fixnum)
         obj
       elsif obj.kind_of?(Time)
-        SimpleUUID::UUID.new(obj).to_guid
-      elsif obj.kind_of?(SimpleUUID::UUID)
+        UUID.new(obj).to_guid
+      elsif obj.kind_of?(UUID)
         obj.to_guid
       # There are corner cases where this is an invalid assumption but they are extremely rare.
       # The alternative is to make the user pack the data on their own .. let's not do that until we have to
@@ -99,7 +99,7 @@ module CassandraCQL
       expected_bind_vars = statement.count("?")
 
       return statement if expected_bind_vars == 0 and bind_vars.empty?
-      raise CassandraCQL::Error::InvalidBindVariable, "Wrong number of bound variables (statement expected #{expected_bind_vars}, was #{bind_vars.size})" if expected_bind_vars != bind_vars.size
+      raise Error::InvalidBindVariable, "Wrong number of bound variables (statement expected #{expected_bind_vars}, was #{bind_vars.size})" if expected_bind_vars != bind_vars.size
     
       # TODO: This can be done better
       statement.chars.map { |c|

@@ -148,12 +148,12 @@ end
 
 describe "cast_to_cql" do
   context "with a Time object" do
-    it "should return a guid of a SimpleUUID::UUID" do
+    it "should return a guid of a UUID" do
       ts = Time.new - 86400 # set it to yesterday just to be sure no defaulting to today misses an error
       guid = Statement.cast_to_cql(ts)
       guid.should be_kind_of(String)
       expect {
-        ret = SimpleUUID::UUID.new(guid)
+        ret = UUID.new(guid)
         uuid_ts = Time.at(ret.seconds)
         [:year, :month, :day, :hour, :min, :sec].each do |sym|
           uuid_ts.send(sym).should eq(ts.send(sym))
@@ -168,9 +168,9 @@ describe "cast_to_cql" do
     end
   end
   
-  context "with a SimpleUUID::UUID object" do
+  context "with a UUID object" do
     it "should return the a guid" do
-      uuid = SimpleUUID::UUID.new
+      uuid = UUID.new
       guid = Statement.cast_to_cql(uuid)
       guid.should eq(uuid.to_guid)
     end

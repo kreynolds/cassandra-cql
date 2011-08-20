@@ -45,13 +45,13 @@ describe "ColumnFamily class" do
   end
   
   context "when calling self.cast" do
-    it "should turn turn SimpleUUID bytes into a Time object" do
+    it "should turn turn UUID bytes into a Time object" do
       ts = Time.new
-      ColumnFamily.cast(SimpleUUID::UUID.new(ts).bytes, "org.apache.cassandra.db.marshal.TimeUUIDType").should eq(ts)
+      ColumnFamily.cast(UUID.new(ts).bytes, "org.apache.cassandra.db.marshal.TimeUUIDType").should eq(ts)
     end
 
-    it "should turn turn a UUID bytes into a SimpleUUID object" do
-      uuid = SimpleUUID::UUID.new
+    it "should turn turn a UUID bytes into a UUID object" do
+      uuid = UUID.new
       ColumnFamily.cast(uuid.bytes, "org.apache.cassandra.db.marshal.UUIDType").should eq(uuid)
     end
 

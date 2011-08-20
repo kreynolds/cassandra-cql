@@ -62,9 +62,9 @@ module CassandraCQL
     def self.cast(value, type)
       case type
       when "org.apache.cassandra.db.marshal.TimeUUIDType"
-        SimpleUUID::UUID.to_time(value)
+        UUID.to_time(value)
       when "org.apache.cassandra.db.marshal.UUIDType"
-        SimpleUUID::UUID.new(value)
+        UUID.new(value)
       when "org.apache.cassandra.db.marshal.IntegerType"
         value.unpack('U')[0]
       when "org.apache.cassandra.db.marshal.LongType", "org.apache.cassandra.db.marshal.CounterColumnType"
