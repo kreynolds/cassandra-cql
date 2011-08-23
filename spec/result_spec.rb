@@ -42,7 +42,7 @@ describe "row results" do
     end
     
     it "should have a result" do
-      result.instance_variable_get(:@result).should be_kind_of(CassandraThrift::CqlResult)
+      result.instance_variable_get(:@result).should be_kind_of(CassandraCQL::Thrift::CqlResult)
     end
   end
   

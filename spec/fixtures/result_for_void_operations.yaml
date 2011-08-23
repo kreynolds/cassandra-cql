@@ -1,2 +1,2 @@
---- !ruby/object:CassandraThrift::CqlResult 
+--- !ruby/object:CassandraCQL::Thrift::CqlResult 
 type: 2

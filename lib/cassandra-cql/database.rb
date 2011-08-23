@@ -12,7 +12,7 @@ module CassandraCQL
       }.merge(options)
 
       @thrift_client_options = {
-        :exception_class_overrides => CassandraThrift::InvalidRequestException
+        :exception_class_overrides => CassandraCQL::Thrift::InvalidRequestException
       }.merge(thrift_client_options)
 
       @keyspace = @options[:keyspace]
@@ -22,7 +22,7 @@ module CassandraCQL
     end
 
     def connect!
-      @connection = ThriftClient.new(CassandraThrift::Cassandra::Client, @servers, @thrift_client_options)
+      @connection = ThriftClient.new(CassandraCQL::Thrift::Client, @servers, @thrift_client_options)
       obj = self
       @connection.add_callback(:post_connect) do
         execute("USE #{@keyspace}")
@@ -64,13 +64,13 @@ module CassandraCQL
       else
         result
       end
-    rescue CassandraThrift::InvalidRequestException
+    rescue CassandraCQL::Thrift::InvalidRequestException
       raise Error::InvalidRequestException.new($!.why)
     end
 
-    def execute_cql_query(cql, compression=CassandraThrift::Compression::NONE)
+    def execute_cql_query(cql, compression=CassandraCQL::Thrift::Compression::NONE)
       @connection.execute_cql_query(cql, compression)
-    rescue CassandraThrift::InvalidRequestException
+    rescue CassandraCQL::Thrift::InvalidRequestException
       raise Error::InvalidRequestException.new($!.why)
     end
     

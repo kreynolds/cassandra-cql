@@ -7,7 +7,7 @@ describe "Schema class" do
 
   context "initialize" do
     it "should set a thrift schema object" do
-      schema.schema.should be_kind_of(CassandraThrift::KsDef)
+      schema.schema.should be_kind_of(CassandraCQL::Thrift::KsDef)
     end
 
     it "should set column family hash" do

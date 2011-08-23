@@ -1,21 +1,21 @@
---- !ruby/object:CassandraThrift::CfDef 
+--- !ruby/object:CassandraCQL::Thrift::CfDef 
   column_metadata: 
-  - !ruby/object:CassandraThrift::ColumnDef 
+  - !ruby/object:CassandraCQL::Thrift::ColumnDef 
     name: bytes
     validation_class: org.apache.cassandra.db.marshal.BytesType
-  - !ruby/object:CassandraThrift::ColumnDef 
+  - !ruby/object:CassandraCQL::Thrift::ColumnDef 
     name: created_at
     validation_class: org.apache.cassandra.db.marshal.TimeUUIDType
-  - !ruby/object:CassandraThrift::ColumnDef 
+  - !ruby/object:CassandraCQL::Thrift::ColumnDef 
     name: serial
     validation_class: org.apache.cassandra.db.marshal.LongType
-  - !ruby/object:CassandraThrift::ColumnDef 
+  - !ruby/object:CassandraCQL::Thrift::ColumnDef 
     name: number
     validation_class: org.apache.cassandra.db.marshal.LongType
-  - !ruby/object:CassandraThrift::ColumnDef 
+  - !ruby/object:CassandraCQL::Thrift::ColumnDef 
     name: name
     validation_class: org.apache.cassandra.db.marshal.UTF8Type
-  - !ruby/object:CassandraThrift::ColumnDef 
+  - !ruby/object:CassandraCQL::Thrift::ColumnDef 
     name: votes
     validation_class: org.apache.cassandra.db.marshal.CounterColumnType
   column_type: Standard

@@ -1,4 +1,4 @@
---- !ruby/object:CassandraThrift::CfDef 
+--- !ruby/object:CassandraCQL::Thrift::CfDef 
   column_metadata: []
 
   column_type: Standard

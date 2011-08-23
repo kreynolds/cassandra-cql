@@ -29,9 +29,9 @@ module CassandraCQL
       end
 
       if options[:compression]
-        res = Result.new(@handle.execute_cql_query(Utility.compress(self.class.sanitize(@statement, bind_vars)), CassandraThrift::Compression::GZIP), column_family)
+        res = Result.new(@handle.execute_cql_query(Utility.compress(self.class.sanitize(@statement, bind_vars)), CassandraCQL::Thrift::Compression::GZIP), column_family)
       else
-        res = Result.new(@handle.execute_cql_query(self.class.sanitize(@statement, bind_vars), CassandraThrift::Compression::NONE), column_family)
+        res = Result.new(@handle.execute_cql_query(self.class.sanitize(@statement, bind_vars), CassandraCQL::Thrift::Compression::NONE), column_family)
       end
     
       # Change our keyspace if required

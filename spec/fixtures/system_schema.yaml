@@ -1,6 +1,6 @@
---- !ruby/object:CassandraThrift::KsDef 
+--- !ruby/object:CassandraCQL::Thrift::KsDef 
 cf_defs: 
-- !ruby/object:CassandraThrift::CfDef 
+- !ruby/object:CassandraCQL::Thrift::CfDef 
   column_metadata: []
 
   column_type: Standard
@@ -26,7 +26,7 @@ cf_defs:
   row_cache_provider: org.apache.cassandra.cache.ConcurrentLinkedHashCacheProvider
   row_cache_save_period_in_seconds: 0
   row_cache_size: 0.0
-- !ruby/object:CassandraThrift::CfDef 
+- !ruby/object:CassandraCQL::Thrift::CfDef 
   column_metadata: []
 
   column_type: Standard
@@ -52,7 +52,7 @@ cf_defs:
   row_cache_provider: org.apache.cassandra.cache.ConcurrentLinkedHashCacheProvider
   row_cache_save_period_in_seconds: 0
   row_cache_size: 0.0
-- !ruby/object:CassandraThrift::CfDef 
+- !ruby/object:CassandraCQL::Thrift::CfDef 
   column_metadata: []
 
   column_type: Standard
@@ -78,7 +78,7 @@ cf_defs:
   row_cache_provider: org.apache.cassandra.cache.ConcurrentLinkedHashCacheProvider
   row_cache_save_period_in_seconds: 0
   row_cache_size: 0.0
-- !ruby/object:CassandraThrift::CfDef 
+- !ruby/object:CassandraCQL::Thrift::CfDef 
   column_metadata: []
 
   column_type: Standard
@@ -104,7 +104,7 @@ cf_defs:
   row_cache_provider: org.apache.cassandra.cache.ConcurrentLinkedHashCacheProvider
   row_cache_save_period_in_seconds: 0
   row_cache_size: 0.0
-- !ruby/object:CassandraThrift::CfDef 
+- !ruby/object:CassandraCQL::Thrift::CfDef 
   column_metadata: []
 
   column_type: Standard
@@ -130,7 +130,7 @@ cf_defs:
   row_cache_provider: org.apache.cassandra.cache.ConcurrentLinkedHashCacheProvider
   row_cache_save_period_in_seconds: 0
   row_cache_size: 0.0
-- !ruby/object:CassandraThrift::CfDef 
+- !ruby/object:CassandraCQL::Thrift::CfDef 
   column_metadata: []
 
   column_type: Super

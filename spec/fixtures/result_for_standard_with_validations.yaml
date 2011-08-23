@@ -1,28 +1,28 @@
---- !ruby/object:CassandraThrift::CqlResult 
+--- !ruby/object:CassandraCQL::Thrift::CqlResult 
 rows: 
-- !ruby/object:CassandraThrift::CqlRow 
+- !ruby/object:CassandraCQL::Thrift::CqlRow 
   columns: 
-  - !ruby/object:CassandraThrift::Column 
+  - !ruby/object:CassandraCQL::Thrift::Column 
     name: id
     timestamp: -1
     value: !binary |
       /vI=
 
-  - !ruby/object:CassandraThrift::Column 
+  - !ruby/object:CassandraCQL::Thrift::Column 
     name: created_at
     timestamp: 1313352911996
     value: !binary |
       HVjV1sayEeCUwDPvrI9RHg==
 
-  - !ruby/object:CassandraThrift::Column 
+  - !ruby/object:CassandraCQL::Thrift::Column 
     name: default_column
     timestamp: 1313353037633
     value: some other default value
-  - !ruby/object:CassandraThrift::Column 
+  - !ruby/object:CassandraCQL::Thrift::Column 
     name: name
     timestamp: 1313352960214
     value: Kelley
-  - !ruby/object:CassandraThrift::Column 
+  - !ruby/object:CassandraCQL::Thrift::Column 
     name: serial
     timestamp: 1313352941406
     value: !binary |
@@ -31,29 +31,29 @@ rows:
   key: !binary |
     /vI=
 
-- !ruby/object:CassandraThrift::CqlRow 
+- !ruby/object:CassandraCQL::Thrift::CqlRow 
   columns: 
-  - !ruby/object:CassandraThrift::Column 
+  - !ruby/object:CassandraCQL::Thrift::Column 
     name: id
     timestamp: -1
     value: !binary |
       /vE=
 
-  - !ruby/object:CassandraThrift::Column 
+  - !ruby/object:CassandraCQL::Thrift::Column 
     name: created_at
     timestamp: 1313352903358
     value: !binary |
       GDK0AMayEeCTDOF8opXpJg==
 
-  - !ruby/object:CassandraThrift::Column 
+  - !ruby/object:CassandraCQL::Thrift::Column 
     name: default_column
     timestamp: 1313353031433
     value: some default value
-  - !ruby/object:CassandraThrift::Column 
+  - !ruby/object:CassandraCQL::Thrift::Column 
     name: name
     timestamp: 1313352968205
     value: Kevin
-  - !ruby/object:CassandraThrift::Column 
+  - !ruby/object:CassandraCQL::Thrift::Column 
     name: serial
     timestamp: 1313352934397
     value: !binary |

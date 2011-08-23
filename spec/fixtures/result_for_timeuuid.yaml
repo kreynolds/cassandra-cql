@@ -1,12 +1,12 @@
---- !ruby/object:CassandraThrift::CqlResult
+--- !ruby/object:CassandraCQL::Thrift::CqlResult
 rows:
-- !ruby/object:CassandraThrift::CqlRow
+- !ruby/object:CassandraCQL::Thrift::CqlRow
   columns:
-  - !ruby/object:CassandraThrift::Column
+  - !ruby/object:CassandraCQL::Thrift::Column
     name: KEY
     timestamp: -1
     value: incinerators-councils
-  - !ruby/object:CassandraThrift::Column
+  - !ruby/object:CassandraCQL::Thrift::Column
     name: !binary |
       tAeA9KciEeCFVRy7npxYoA==
 

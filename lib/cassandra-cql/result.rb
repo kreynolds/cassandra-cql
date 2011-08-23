@@ -14,15 +14,15 @@ module CassandraCQL
     end
   
     def void?
-      @result.type == CassandraThrift::CqlResultType::VOID
+      @result.type == CassandraCQL::Thrift::CqlResultType::VOID
     end
     
     def int?
-      @result.type == CassandraThrift::CqlResultType::INT
+      @result.type == CassandraCQL::Thrift::CqlResultType::INT
     end
 
     def rows?
-      @result.type == CassandraThrift::CqlResultType::ROWS
+      @result.type == CassandraCQL::Thrift::CqlResultType::ROWS
     end
 
     def rows
@@ -37,15 +37,15 @@ module CassandraCQL
     
     def fetch_row
       case @result.type
-      when CassandraThrift::CqlResultType::ROWS
+      when CassandraCQL::Thrift::CqlResultType::ROWS
         return nil if @cursor >= rows
 
         row = Row.new(@result.rows[@cursor], @column_family)
         @cursor += 1
         return row
-      when CassandraThrift::CqlResultType::VOID
+      when CassandraCQL::Thrift::CqlResultType::VOID
         return nil
-      when CassandraThrift::CqlResultType::INT
+      when CassandraCQL::Thrift::CqlResultType::INT
         return @result.num
       else
         raise Error::InvalidResultType, "Expects one of 0, 1, 2; was #{@result.type} "
