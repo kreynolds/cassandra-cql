@@ -60,7 +60,6 @@ module CassandraCQL
     end
     
     def self.escape(obj)
-      # TODO: performance test using String.index as an optimized for skipping this regex
       obj.gsub("'", "\\\\'")
     end
 
