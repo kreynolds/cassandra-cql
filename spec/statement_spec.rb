@@ -231,11 +231,21 @@ describe "sanitize" do
       expect {
         Statement.sanitize("use keyspace ?")
       }.to raise_error(Error::InvalidBindVariable)
+
+      expect {
+        Statement.sanitize("use keyspace ?", ['too', 'many'])
+      }.to raise_error(Error::InvalidBindVariable)
     end
 
     it "should not raise an exception with matching bind vars" do
       expect {
         Statement.sanitize("use keyspace ?", ["test"]).should eq("use keyspace 'test'")
+      }.to_not raise_error(Error::InvalidBindVariable)
+    end
+
+    it "should have bind vars in the right order" do
+      expect {
+        Statement.sanitize("use keyspace ? with randomness (?)", ["test", "stuff"]).should eq("use keyspace 'test' with randomness ('stuff')")
       }.to_not raise_error(Error::InvalidBindVariable)
     end
   end

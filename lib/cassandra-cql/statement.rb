@@ -101,10 +101,9 @@ module CassandraCQL
       return statement if expected_bind_vars == 0 and bind_vars.empty?
       raise Error::InvalidBindVariable, "Wrong number of bound variables (statement expected #{expected_bind_vars}, was #{bind_vars.size})" if expected_bind_vars != bind_vars.size
     
-      # TODO: This can be done better
-      statement.chars.map { |c|
-        c == '?' ? quote(cast_to_cql(bind_vars.shift)) : c    
-      }.join
+      statement.gsub(/\?/) {
+        quote(cast_to_cql(bind_vars.shift))
+      }
     end
   end
 end
