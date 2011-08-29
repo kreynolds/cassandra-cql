@@ -1,5 +1,4 @@
 here = File.dirname(__FILE__)
-$LOAD_PATH << "#{here}/../vendor/gen-rb"
 require "#{here}/../vendor/gen-rb/cassandra"
 
 require 'thrift_client'
