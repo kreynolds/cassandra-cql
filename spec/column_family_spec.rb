@@ -56,10 +56,12 @@ describe "ColumnFamily class" do
     end
 
     it "should turn turn a packed integer into a Fixnum" do
-      ColumnFamily.cast([15].pack("U"), "org.apache.cassandra.db.marshal.IntegerType").should eq(15)
+      ColumnFamily.cast([0x7FFFFFFF].pack("N"), "org.apache.cassandra.db.marshal.IntegerType").should eq(0x7FFFFFFF)
     end
 
-    it "should turn turn a packed integer into a Fixnum"
+    it "should turn turn a packed negative integer into a negative Fixnum" do
+      ColumnFamily.cast([-68047].pack("N"), "org.apache.cassandra.db.marshal.IntegerType").should eq(-68047)
+    end
 
     it "should call to_s with AsciiType" do
       obj = double("String")

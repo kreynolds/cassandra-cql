@@ -66,7 +66,12 @@ module CassandraCQL
       when "org.apache.cassandra.db.marshal.UUIDType"
         UUID.new(value)
       when "org.apache.cassandra.db.marshal.IntegerType"
-        value.unpack('U')[0]
+        int = value.unpack('N')[0]
+        if int & 2**31 == 2**31
+          int - 2**32
+        else
+          int
+        end
       when "org.apache.cassandra.db.marshal.LongType", "org.apache.cassandra.db.marshal.CounterColumnType"
         ints = value.unpack("NN")
         (ints[0] << 32) + ints[1]
