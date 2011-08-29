@@ -2,7 +2,7 @@
 # with other projects using the same bindings
 
 require 'thrift'
-require 'cassandra_types'
+require File.join(File.dirname(__FILE__), 'cassandra_types')
 
 module CassandraCQL
   module Thrift
