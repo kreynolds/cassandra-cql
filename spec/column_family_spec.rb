@@ -43,24 +43,40 @@ describe "ColumnFamily class" do
       super_column_family.super?.should be_true
     end
   end
-  
+
   context "when calling self.cast" do
-    it "should turn turn UUID bytes into a Time object" do
+    it "should turn UUID bytes into a Time object" do
       ts = Time.new
       ColumnFamily.cast(UUID.new(ts).bytes, "org.apache.cassandra.db.marshal.TimeUUIDType").should eq(ts)
     end
 
-    it "should turn turn a UUID bytes into a UUID object" do
+    it "should turn a UUID bytes into a UUID object" do
       uuid = UUID.new
       ColumnFamily.cast(uuid.bytes, "org.apache.cassandra.db.marshal.UUIDType").should eq(uuid)
     end
 
-    it "should turn turn a packed integer into a Fixnum" do
+    it "should turn a packed integer into a Fixnum" do
       ColumnFamily.cast([0x7FFFFFFF].pack("N"), "org.apache.cassandra.db.marshal.IntegerType").should eq(0x7FFFFFFF)
     end
 
-    it "should turn turn a packed negative integer into a negative Fixnum" do
+    it "should turn a packed negative integer into a negative Fixnum" do
       ColumnFamily.cast([-68047].pack("N"), "org.apache.cassandra.db.marshal.IntegerType").should eq(-68047)
+    end
+
+    it "should turn a packed long into a number" do
+      number = 2**33
+      packed = [number >> 32, number].pack("N*")
+
+      ColumnFamily.cast(packed, "org.apache.cassandra.db.marshal.LongType").should eq(number)
+      ColumnFamily.cast(packed, "org.apache.cassandra.db.marshal.CounterColumnType").should eq(number)
+    end
+
+    it "should turn a packed negative long into a negative number" do
+      number = -2**33
+      packed = [number >> 32, number].pack("N*")
+
+      ColumnFamily.cast(packed, "org.apache.cassandra.db.marshal.LongType").should eq(number)
+      ColumnFamily.cast(packed, "org.apache.cassandra.db.marshal.CounterColumnType").should eq(number)
     end
 
     it "should call to_s with AsciiType" do
