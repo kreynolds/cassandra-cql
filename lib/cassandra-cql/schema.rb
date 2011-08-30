@@ -74,18 +74,23 @@ module CassandraCQL
         end
       when "org.apache.cassandra.db.marshal.LongType", "org.apache.cassandra.db.marshal.CounterColumnType"
         ints = value.unpack("NN")
-        (ints[0] << 32) + ints[1]
+        val = (ints[0] << 32) + ints[1]
+        if val & 2**63 == 2**63
+          val - 2**64
+        else
+          val
+        end
       when "org.apache.cassandra.db.marshal.AsciiType", "org.apache.cassandra.db.marshal.UTF8Type"
         value.to_s
       else
         value
       end
     end
-    
+
     def name
       @cf_def.name
     end
-  
+
     def type
       @cf_def.column_type
     end
