@@ -69,11 +69,10 @@ module CassandraCQL
         int = 0
         values = value.unpack('C*')
         values.each {|v| int = int << 8; int += v; }
-        if int & 2**31 == 2**31
-          int - 2**32
-        else
-          int
+        if value[0].ord & 128 != 0
+          int = int - (1 << value.length * 8)
         end
+        int
       when "org.apache.cassandra.db.marshal.LongType", "org.apache.cassandra.db.marshal.CounterColumnType"
         ints = value.unpack("NN")
         val = (ints[0] << 32) + ints[1]
