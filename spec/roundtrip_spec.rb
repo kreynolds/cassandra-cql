@@ -13,10 +13,6 @@ describe "RoundTrip tests" do
     thrift_options = {:retries => 2, :timeout => 1}
     @type_conversions = CassandraCQL::Database.new(conn, {:keyspace => 'TypeConversions'}, thrift_options)
     clear_keyspace!(@type_conversions)
-    @multiblog_long = CassandraCQL::Database.new(conn, {:keyspace => 'MultiblogLong'}, thrift_options)
-    clear_keyspace!(@multiblog_long)
-    @twitter = CassandraCQL::Database.new(conn, {:keyspace => 'Twitter'}, thrift_options)
-    clear_keyspace!(@twitter)
   end
 
   context "with comparator IntegerType" do
@@ -60,11 +56,11 @@ describe "RoundTrip tests" do
 
   context "with comparator LongType" do
     def create_and_fetch_long_column(long_column_name)
-      cql = 'insert into Blogs (KEY, ?) values (?, ?)'
+      cql = 'insert into LongConversion (KEY, ?) values (?, ?)'
       row_key = 'rationalistic-hammock'
       column_value = 'thyroid-hallucinogen'
-      @multiblog_long.execute(cql, long_column_name, row_key, column_value)
-      return @multiblog_long.execute('select ? from Blogs where KEY = ?', long_column_name, row_key).fetch
+      @type_conversions.execute(cql, long_column_name, row_key, column_value)
+      return @type_conversions.execute('select ? from LongConversion where KEY = ?', long_column_name, row_key).fetch
     end
 
     it "should properly convert long values shorter than 4 bytes" do
@@ -89,16 +85,16 @@ describe "RoundTrip tests" do
   context "with comparator CounterColumnType" do
     it "should convert counters to long values" do
       i = 2**32 + 280647
-      @twitter.execute("update UserCounters set Montezuma = Montezuma + #{i} where KEY = 'Houston'")
-      row = @twitter.execute("select Montezuma from UserCounters where KEY = 'Houston'").fetch
+      @type_conversions.execute("update CounterConversion set Montezuma = Montezuma + #{i} where KEY = 'Houston'")
+      row = @type_conversions.execute("select Montezuma from CounterConversion where KEY = 'Houston'").fetch
       row.column_values.should eq([i])
 
-      @twitter.execute("update UserCounters set Montezuma = Montezuma - #{i} where KEY = 'Houston'")
-      row = @twitter.execute("select Montezuma from UserCounters where KEY = 'Houston'").fetch
+      @type_conversions.execute("update CounterConversion set Montezuma = Montezuma - #{i} where KEY = 'Houston'")
+      row = @type_conversions.execute("select Montezuma from CounterConversion where KEY = 'Houston'").fetch
       row.column_values.should eq([0])
 
-      @twitter.execute("update UserCounters set Montezuma = Montezuma - #{i} where KEY = 'Houston'")
-      row = @twitter.execute("select Montezuma from UserCounters where KEY = 'Houston'").fetch
+      @type_conversions.execute("update CounterConversion set Montezuma = Montezuma - #{i} where KEY = 'Houston'")
+      row = @type_conversions.execute("select Montezuma from CounterConversion where KEY = 'Houston'").fetch
       row.column_values.should eq([-i])
     end
   end
