@@ -21,11 +21,11 @@ module CassandraCQL
     def to_s
       keyspace
     end
-  
+
     def keyspace
       name
     end
-  
+
     def column_family_names
       @column_families.keys
     end
@@ -34,11 +34,11 @@ module CassandraCQL
 
   class ColumnFamily
     attr_reader :cf_def
-  
+
     def initialize(cf_def)
       @cf_def = cf_def
     end
-  
+
     def method_missing(method, *args, &block)
       if @cf_def.respond_to?(method)
         @cf_def.send(method)
@@ -49,7 +49,7 @@ module CassandraCQL
 
     def columns
       return @columns if @columns
-      
+
       @columns = Hash.new(default_validation_class)
       @cf_def.column_metadata.each do |col|
         @columns[col.name] = col.validation_class
@@ -58,7 +58,7 @@ module CassandraCQL
 
       @columns
     end
-    
+
     def self.cast(value, type)
       case type
       when "org.apache.cassandra.db.marshal.TimeUUIDType"
@@ -66,12 +66,13 @@ module CassandraCQL
       when "org.apache.cassandra.db.marshal.UUIDType"
         UUID.new(value)
       when "org.apache.cassandra.db.marshal.IntegerType"
-        int = value.unpack('N')[0]
-        if int & 2**31 == 2**31
-          int - 2**32
-        else
-          int
+        int = 0
+        values = value.unpack('C*')
+        values.each {|v| int = int << 8; int += v; }
+        if value[0].ord & 128 != 0
+          int = int - (1 << value.length * 8)
         end
+        int
       when "org.apache.cassandra.db.marshal.LongType", "org.apache.cassandra.db.marshal.CounterColumnType"
         ints = value.unpack("NN")
         val = (ints[0] << 32) + ints[1]
@@ -102,7 +103,7 @@ module CassandraCQL
     def standard?
       type == 'Standard'
     end
-  
+
     def super?
       type == 'Super'
     end

@@ -27,7 +27,7 @@ describe "ColumnFamily class" do
       }.to raise_error NoMethodError
     end
   end
-  
+
   context "with a standard column family" do
     it "should be standard" do
       standard_column_family.type.should eq("Standard")
@@ -53,14 +53,6 @@ describe "ColumnFamily class" do
     it "should turn a UUID bytes into a UUID object" do
       uuid = UUID.new
       ColumnFamily.cast(uuid.bytes, "org.apache.cassandra.db.marshal.UUIDType").should eq(uuid)
-    end
-
-    it "should turn a packed integer into a Fixnum" do
-      ColumnFamily.cast([0x7FFFFFFF].pack("N"), "org.apache.cassandra.db.marshal.IntegerType").should eq(0x7FFFFFFF)
-    end
-
-    it "should turn a packed negative integer into a negative Fixnum" do
-      ColumnFamily.cast([-68047].pack("N"), "org.apache.cassandra.db.marshal.IntegerType").should eq(-68047)
     end
 
     it "should turn a packed long into a number" do
@@ -90,19 +82,19 @@ describe "ColumnFamily class" do
       obj.should_receive(:to_s)
       ColumnFamily.cast(obj, "org.apache.cassandra.db.marshal.UTF8Type")
     end
-    
+
     it "should return self with BytesType" do
       obj = Object.new
       ColumnFamily.cast(obj, "org.apache.cassandra.db.marshal.BytesType").object_id.should eq(obj.object_id)
     end
   end
-  
+
   context "validations classes" do
     let(:column_family) { ColumnFamily.new(yaml_fixture(:standard_with_validations)) }
     it "should have a hash of column_names and validations" do
       column_family.columns.should be_kind_of(Hash)
     end
-    
+
     it "should have a default validation class" do
       column_family.columns.default.should eq(column_family.cf_def.default_validation_class)
     end
