@@ -3,10 +3,20 @@ include CassandraCQL
 
 describe "RoundTrip tests" do
   before(:all) do
+    def clear_keyspace!(connection)
+      connection.schema.column_family_names.each do |cf|
+        connection.execute("truncate #{cf}")
+      end
+    end
+
     conn = ["127.0.0.1:9160"]
-    thrift_options = {:retries => 2, :timeout => 0.1}
+    thrift_options = {:retries => 2, :timeout => 1}
     @type_conversions = CassandraCQL::Database.new(conn, {:keyspace => 'TypeConversions'}, thrift_options)
+    clear_keyspace!(@type_conversions)
     @multiblog_long = CassandraCQL::Database.new(conn, {:keyspace => 'MultiblogLong'}, thrift_options)
+    clear_keyspace!(@multiblog_long)
+    @twitter = CassandraCQL::Database.new(conn, {:keyspace => 'Twitter'}, thrift_options)
+    clear_keyspace!(@twitter)
   end
 
   context "with comparator IntegerType" do
@@ -73,6 +83,23 @@ describe "RoundTrip tests" do
       i = -i
       row = create_and_fetch_long_column(i)
       row.column_names.should eq([i])
+    end
+  end
+
+  context "with comparator CounterColumnType" do
+    it "should convert counters to long values" do
+      i = 2**32 + 280647
+      @twitter.execute("update UserCounters set Montezuma = Montezuma + #{i} where KEY = 'Houston'")
+      row = @twitter.execute("select Montezuma from UserCounters where KEY = 'Houston'").fetch
+      row.column_values.should eq([i])
+
+      @twitter.execute("update UserCounters set Montezuma = Montezuma - #{i} where KEY = 'Houston'")
+      row = @twitter.execute("select Montezuma from UserCounters where KEY = 'Houston'").fetch
+      row.column_values.should eq([0])
+
+      @twitter.execute("update UserCounters set Montezuma = Montezuma - #{i} where KEY = 'Houston'")
+      row = @twitter.execute("select Montezuma from UserCounters where KEY = 'Houston'").fetch
+      row.column_values.should eq([-i])
     end
   end
 end
