@@ -60,6 +60,8 @@ module CassandraCQL
     end
 
     def self.cast(value, type)
+      return nil if value.nil?
+
       case type
       when "org.apache.cassandra.db.marshal.TimeUUIDType"
         UUID.to_time(value)

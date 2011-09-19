@@ -87,6 +87,13 @@ describe "ColumnFamily class" do
       obj = Object.new
       ColumnFamily.cast(obj, "org.apache.cassandra.db.marshal.BytesType").object_id.should eq(obj.object_id)
     end
+
+    it "should return nil for all types of nil" do
+      %w(TimeUUIDType UUIDType LongType IntegerType
+        UTF8Type AsciiType CounterColumnType).each do |type|
+        ColumnFamily.cast(nil, "org.apache.cassandra.db.marshal.#{type}").should eq(nil)
+      end
+    end
   end
 
   context "validations classes" do
