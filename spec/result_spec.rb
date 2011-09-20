@@ -12,6 +12,26 @@ describe "void results" do
   end
 end
 
+describe "sparse row results" do
+  let(:column_family) { ColumnFamily.new(yaml_fixture(:standard_with_validations)) }
+  let(:cql_result) { yaml_fixture(:result_for_sparse_columns) }
+  let(:result) { Result.new(cql_result, column_family) }
+  it "should should be handled properly" do
+    result.rows.should eq(2)
+    # First column should have 3 columns set, one nil
+    row = result.fetch
+    row.columns.should eq(4)
+    row.column_names.should eq(['col1', 'col2', 'col3', 'col4'])
+    row.column_values.should eq(['val1', 'val2', 'val3', nil])
+
+    # Second column should have the last column set
+    row = result.fetch
+    row.columns.should eq(4)
+    row.column_names.should eq(['col1', 'col2', 'col3', 'col4'])
+    row.column_values.should eq([nil, nil, nil, 'val4'])
+  end
+end
+
 describe "row results" do
   let(:column_family) { ColumnFamily.new(yaml_fixture(:standard_with_validations)) }
   let(:cql_result) { yaml_fixture(:result_for_standard_with_validations) }
