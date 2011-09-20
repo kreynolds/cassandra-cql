@@ -1,0 +1,28 @@
+--- !ruby/object:CassandraCQL::Thrift::CqlResult 
+rows: 
+- !ruby/object:CassandraCQL::Thrift::CqlRow 
+  columns: 
+  - !ruby/object:CassandraCQL::Thrift::Column 
+    name: KEY
+    timestamp: -1
+    value: row_key
+  - !ruby/object:CassandraCQL::Thrift::Column 
+    name: col1
+    timestamp: 1316560402904
+    value: !binary |
+      AAAAAAAAAAE=
+
+  - !ruby/object:CassandraCQL::Thrift::Column 
+    name: col2
+    timestamp: 1316560402904
+    value: !binary |
+      AAAAAAAAAAI=
+
+  - !ruby/object:CassandraCQL::Thrift::Column 
+    name: col3
+    timestamp: 1316560402904
+    value: !binary |
+      AAAAAAAAAAM=
+
+  key: row_key
+type: 1

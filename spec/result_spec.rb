@@ -12,6 +12,18 @@ describe "void results" do
   end
 end
 
+describe "long validation" do
+  let(:column_family) { ColumnFamily.new(yaml_fixture(:standard_with_long_validation)) }
+  let(:cql_result) { yaml_fixture(:result_for_standard_with_long_validation) }
+  let(:result) { Result.new(cql_result, column_family) }
+  it "should return UTF8 column_names and Fixnum values" do
+    result.fetch do |row|
+      row.column_names.should eq(['KEY', 'col1', 'col2', 'col3'])
+      row.column_values.should eq(['row_key', 1, 2, 3])
+    end
+  end
+end
+
 describe "sparse row results" do
   let(:column_family) { ColumnFamily.new(yaml_fixture(:standard_with_validations)) }
   let(:cql_result) { yaml_fixture(:result_for_sparse_columns) }
