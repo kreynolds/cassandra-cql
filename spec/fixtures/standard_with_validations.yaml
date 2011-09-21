@@ -15,9 +15,6 @@
   - !ruby/object:CassandraCQL::Thrift::ColumnDef 
     name: name
     validation_class: org.apache.cassandra.db.marshal.UTF8Type
-  - !ruby/object:CassandraCQL::Thrift::ColumnDef 
-    name: votes
-    validation_class: org.apache.cassandra.db.marshal.CounterColumnType
   column_type: Standard
   comment: ""
   comparator_type: org.apache.cassandra.db.marshal.UTF8Type
