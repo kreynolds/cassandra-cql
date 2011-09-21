@@ -1,0 +1,16 @@
+--- !ruby/object:CassandraCQL::Thrift::CqlResult 
+rows: 
+- !ruby/object:CassandraCQL::Thrift::CqlRow 
+  columns: 
+  - !ruby/object:CassandraCQL::Thrift::Column 
+    name: KEY
+    timestamp: -1
+    value: row_key
+  - !ruby/object:CassandraCQL::Thrift::Column 
+    name: col_counter
+    timestamp: 1316563572627
+    value: !binary |
+      AAAAAAAAAAE=
+
+  key: row_key
+type: 1

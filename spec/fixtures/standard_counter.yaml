@@ -1,0 +1,26 @@
+--- !ruby/object:CassandraCQL::Thrift::CfDef 
+column_metadata: []
+
+column_type: Standard
+comment: ""
+comparator_type: org.apache.cassandra.db.marshal.AsciiType
+default_validation_class: org.apache.cassandra.db.marshal.CounterColumnType
+gc_grace_seconds: 864000
+id: 1006
+key_alias: KEY
+key_cache_save_period_in_seconds: 14400
+key_cache_size: 200000.0
+key_validation_class: org.apache.cassandra.db.marshal.UTF8Type
+keyspace: Keyspace1
+max_compaction_threshold: 32
+memtable_flush_after_mins: 1440
+memtable_operations_in_millions: 0.290625
+memtable_throughput_in_mb: 62
+merge_shards_chance: 0.0
+min_compaction_threshold: 4
+name: Foo
+read_repair_chance: 1.0
+replicate_on_write: true
+row_cache_provider: org.apache.cassandra.cache.ConcurrentLinkedHashCacheProvider
+row_cache_save_period_in_seconds: 0
+row_cache_size: 0.0
