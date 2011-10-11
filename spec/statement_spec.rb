@@ -111,9 +111,9 @@ end
 
 describe "escape" do
   it "should escape quotes" do
-    Statement.escape("'").should eq("\\'")
-    Statement.escape("\'").should eq("\\'")
-    Statement.escape("\\'").should eq("\\\\'")
+    Statement.escape(%q{'}).should eq(%q{''})
+    Statement.escape(%q{\'}).should eq(%q{\''})
+    Statement.escape(%q{''}).should eq(%q{''''})
   end
 end
 
@@ -133,10 +133,10 @@ describe "quote" do
   context "with an array" do
     it "should return a comma-separated list" do
       Statement.quote([1, 2, 3]).should eq("1,2,3")
-      Statement.quote(["a", "b'", "c"]).should eq("'a','b\\'','c'")
+      Statement.quote(["a", "b''", "c"]).should eq("'a','b''','c'")
     end
   end
-  
+
   context "with an unsupported object" do
     it "should raise an exception" do
       expect {
@@ -248,6 +248,19 @@ describe "sanitize" do
         Statement.sanitize("use keyspace ? with randomness (?)", ["test", "stuff"]).should eq("use keyspace 'test' with randomness ('stuff')")
       }.to_not raise_error(Error::InvalidBindVariable)
     end
+
+    it "should not double-escape the single quotes in your string" do
+      Statement.sanitize(
+        "insert into keyspace (key, ?) values (?)", ["vanilla", %Q{I\'m a string with \'cool\' quotes}]
+      ).should eq("insert into keyspace (key, 'vanilla') values ('I''m a string with ''cool'' quotes')")
+    end
+
+    it "should handle numbers and stuff appropriately" do
+      Statement.sanitize(
+        "insert into keyspace (key, ?) values (?)", [488, 60.368]
+      ).should eq("insert into keyspace (key, 488) values ('60.368')")
+    end
+
   end
 end
 
