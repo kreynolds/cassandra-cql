@@ -54,27 +54,27 @@ module CassandraCQL
         res
       end
     end
-  
+
     def finish
       true
     end
-    
+
     def self.escape(obj)
-      obj.gsub("'", "\\\\'")
+      obj.gsub("'", "''")
     end
 
     def self.quote(obj)
       if obj.kind_of?(Array)
         obj.map { |member| quote(member) }.join(",")
       elsif obj.kind_of?(String)
-        "'" + escape(obj) + "'"
+        "'" + obj + "'"
       elsif obj.kind_of?(Fixnum)
         obj
       else
         raise Error::UnescapableObject, "Unable to escape object of class #{obj.class}"
       end
     end
-  
+
     def self.cast_to_cql(obj)
       if obj.kind_of?(Array)
         obj.map { |member| cast_to_cql(member) }
