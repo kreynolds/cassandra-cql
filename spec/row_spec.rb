@@ -32,8 +32,8 @@ describe "basic methods" do
   end
   
   context "checking types" do
-    it "should return a Time for created_at" do
-      row['created_at'].should be_kind_of(Time)
+    it "should return a UUID for created_at" do
+      row['created_at'].should be_kind_of(UUID)
     end
 
     it "should return a Fixnum for serial" do
