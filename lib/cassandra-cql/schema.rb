@@ -62,7 +62,8 @@ module CassandraCQL
     def self.cast(value, type)
       return nil if value.nil?
 
-      klass = type.split(".").last
+      # 3x faster than split
+      klass = type[type.rindex('.')+1..-1]
       if CassandraCQL::Types.const_defined?(klass)
         CassandraCQL::Types.const_get(klass).cast(value)
       else
