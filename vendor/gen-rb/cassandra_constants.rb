@@ -5,6 +5,6 @@ require File.join(File.dirname(__FILE__), 'cassandra_types')
 
 module CassandraCQL
   module Thrift
-    VERSION = %q"19.10.0"
+    VERSION = %q"19.17.0"
   end
 end

@@ -73,12 +73,14 @@ describe "ColumnFamily class" do
 
     it "should call to_s with AsciiType" do
       obj = double("String")
+      obj.stub(:to_s) { "string" }
       obj.should_receive(:to_s)
       ColumnFamily.cast(obj, "org.apache.cassandra.db.marshal.AsciiType")
     end
 
     it "should call to_s with UTF8Type" do
       obj = double("String")
+      obj.stub(:to_s) { "string" }
       obj.should_receive(:to_s)
       ColumnFamily.cast(obj, "org.apache.cassandra.db.marshal.UTF8Type")
     end

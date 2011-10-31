@@ -2206,5 +2206,7 @@ module CassandraCQL
 
       ::Thrift::Struct.generate_accessors self
     end
+
   end
+
 end

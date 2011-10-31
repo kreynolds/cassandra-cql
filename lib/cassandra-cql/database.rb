@@ -78,6 +78,11 @@ module CassandraCQL
       @keyspace = (ks.nil? ? nil : ks.to_s)
     end
   
+    def keyspaces
+      # TODO: This should be replaced with a CQL call that doesn't exist yet
+      @connection.describe_keyspaces.map { |keyspace| Schema.new(keyspace) }
+    end
+    
     def update_schema!
       if @keyspace.nil?
         @schema = nil

@@ -62,29 +62,11 @@ module CassandraCQL
     def self.cast(value, type)
       return nil if value.nil?
 
-      case type
-      when "org.apache.cassandra.db.marshal.TimeUUIDType", "org.apache.cassandra.db.marshal.UUIDType"
-        UUID.new(value)
-      when "org.apache.cassandra.db.marshal.IntegerType"
-        int = 0
-        values = value.unpack('C*')
-        values.each {|v| int = int << 8; int += v; }
-        if value[0].ord & 128 != 0
-          int = int - (1 << value.length * 8)
-        end
-        int
-      when "org.apache.cassandra.db.marshal.LongType", "org.apache.cassandra.db.marshal.CounterColumnType"
-        ints = value.unpack("NN")
-        val = (ints[0] << 32) + ints[1]
-        if val & 2**63 == 2**63
-          val - 2**64
-        else
-          val
-        end
-      when "org.apache.cassandra.db.marshal.AsciiType", "org.apache.cassandra.db.marshal.UTF8Type"
-        value.to_s
+      klass = type.split(".").last
+      if CassandraCQL::Types.const_defined?(klass)
+        CassandraCQL::Types.const_get(klass).cast(value)
       else
-        value
+        CassandraCQL::Types::AbstractType.cast(value)
       end
     end
 

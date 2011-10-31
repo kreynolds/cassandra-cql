@@ -5,12 +5,10 @@ require 'rake'
 require 'rspec/core'
 require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new(:spec) do |spec|
-  spec.skip_bundler = true
   spec.pattern = FileList['spec/**/*_spec.rb']
 end
 
 RSpec::Core::RakeTask.new(:rcov) do |spec|
-  spec.skip_bundler = true
   spec.pattern = FileList['spec/**/*_spec.rb']
   spec.rcov = true
   spec.rcov_opts = "--exclude 'spec/*'"
@@ -145,7 +143,7 @@ namespace :data do
   end
 end
 
-task :spec => 'data:load'
+#task :spec => 'data:load'
 
 require 'yard'
 YARD::Rake::YardocTask.new

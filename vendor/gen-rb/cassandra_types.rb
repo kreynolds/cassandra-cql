@@ -28,8 +28,9 @@ module CassandraCQL
 
     module IndexType
       KEYS = 0
-      VALUE_MAP = {0 => "KEYS"}
-      VALID_VALUES = Set.new([KEYS]).freeze
+      CUSTOM = 1
+      VALUE_MAP = {0 => "KEYS", 1 => "CUSTOM"}
+      VALID_VALUES = Set.new([KEYS, CUSTOM]).freeze
     end
 
     module Compression
@@ -601,16 +602,24 @@ module CassandraCQL
       ::Thrift::Struct.generate_accessors self
     end
 
+    # A TokenRange describes part of the Cassandra ring, it is a mapping from a range to
+    # endpoints responsible for that range.
+    # @param start_token The first token in the range
+    # @param end_token The last token in the range
+    # @param endpoints The endpoints responsible for the range (listed by their configured listen_address)
+    # @param rpc_endpoints The endpoints responsible for the range (listed by their configured rpc_address)
     class TokenRange
       include ::Thrift::Struct, ::Thrift::Struct_Union
       START_TOKEN = 1
       END_TOKEN = 2
       ENDPOINTS = 3
+      RPC_ENDPOINTS = 4
 
       FIELDS = {
         START_TOKEN => {:type => ::Thrift::Types::STRING, :name => 'start_token'},
         END_TOKEN => {:type => ::Thrift::Types::STRING, :name => 'end_token'},
-        ENDPOINTS => {:type => ::Thrift::Types::LIST, :name => 'endpoints', :element => {:type => ::Thrift::Types::STRING}}
+        ENDPOINTS => {:type => ::Thrift::Types::LIST, :name => 'endpoints', :element => {:type => ::Thrift::Types::STRING}},
+        RPC_ENDPOINTS => {:type => ::Thrift::Types::LIST, :name => 'rpc_endpoints', :element => {:type => ::Thrift::Types::STRING}, :optional => true}
       }
 
       def struct_fields; FIELDS; end
@@ -648,12 +657,14 @@ module CassandraCQL
       VALIDATION_CLASS = 2
       INDEX_TYPE = 3
       INDEX_NAME = 4
+      INDEX_OPTIONS = 5
 
       FIELDS = {
         NAME => {:type => ::Thrift::Types::STRING, :name => 'name', :binary => true},
         VALIDATION_CLASS => {:type => ::Thrift::Types::STRING, :name => 'validation_class'},
         INDEX_TYPE => {:type => ::Thrift::Types::I32, :name => 'index_type', :optional => true, :enum_class => CassandraCQL::Thrift::IndexType},
-        INDEX_NAME => {:type => ::Thrift::Types::STRING, :name => 'index_name', :optional => true}
+        INDEX_NAME => {:type => ::Thrift::Types::STRING, :name => 'index_name', :optional => true},
+        INDEX_OPTIONS => {:type => ::Thrift::Types::MAP, :name => 'index_options', :key => {:type => ::Thrift::Types::STRING}, :value => {:type => ::Thrift::Types::STRING}, :optional => true}
       }
 
       def struct_fields; FIELDS; end
@@ -688,14 +699,15 @@ module CassandraCQL
       MAX_COMPACTION_THRESHOLD = 18
       ROW_CACHE_SAVE_PERIOD_IN_SECONDS = 19
       KEY_CACHE_SAVE_PERIOD_IN_SECONDS = 20
-      MEMTABLE_FLUSH_AFTER_MINS = 21
-      MEMTABLE_THROUGHPUT_IN_MB = 22
-      MEMTABLE_OPERATIONS_IN_MILLIONS = 23
       REPLICATE_ON_WRITE = 24
       MERGE_SHARDS_CHANCE = 25
       KEY_VALIDATION_CLASS = 26
       ROW_CACHE_PROVIDER = 27
       KEY_ALIAS = 28
+      COMPACTION_STRATEGY = 29
+      COMPACTION_STRATEGY_OPTIONS = 30
+      ROW_CACHE_KEYS_TO_SAVE = 31
+      COMPRESSION_OPTIONS = 32
 
       FIELDS = {
         KEYSPACE => {:type => ::Thrift::Types::STRING, :name => 'keyspace'},
@@ -715,14 +727,15 @@ module CassandraCQL
         MAX_COMPACTION_THRESHOLD => {:type => ::Thrift::Types::I32, :name => 'max_compaction_threshold', :optional => true},
         ROW_CACHE_SAVE_PERIOD_IN_SECONDS => {:type => ::Thrift::Types::I32, :name => 'row_cache_save_period_in_seconds', :optional => true},
         KEY_CACHE_SAVE_PERIOD_IN_SECONDS => {:type => ::Thrift::Types::I32, :name => 'key_cache_save_period_in_seconds', :optional => true},
-        MEMTABLE_FLUSH_AFTER_MINS => {:type => ::Thrift::Types::I32, :name => 'memtable_flush_after_mins', :optional => true},
-        MEMTABLE_THROUGHPUT_IN_MB => {:type => ::Thrift::Types::I32, :name => 'memtable_throughput_in_mb', :optional => true},
-        MEMTABLE_OPERATIONS_IN_MILLIONS => {:type => ::Thrift::Types::DOUBLE, :name => 'memtable_operations_in_millions', :optional => true},
         REPLICATE_ON_WRITE => {:type => ::Thrift::Types::BOOL, :name => 'replicate_on_write', :optional => true},
         MERGE_SHARDS_CHANCE => {:type => ::Thrift::Types::DOUBLE, :name => 'merge_shards_chance', :optional => true},
         KEY_VALIDATION_CLASS => {:type => ::Thrift::Types::STRING, :name => 'key_validation_class', :optional => true},
-        ROW_CACHE_PROVIDER => {:type => ::Thrift::Types::STRING, :name => 'row_cache_provider', :default => %q"org.apache.cassandra.cache.ConcurrentLinkedHashCacheProvider", :optional => true},
-        KEY_ALIAS => {:type => ::Thrift::Types::STRING, :name => 'key_alias', :binary => true, :optional => true}
+        ROW_CACHE_PROVIDER => {:type => ::Thrift::Types::STRING, :name => 'row_cache_provider', :optional => true},
+        KEY_ALIAS => {:type => ::Thrift::Types::STRING, :name => 'key_alias', :binary => true, :optional => true},
+        COMPACTION_STRATEGY => {:type => ::Thrift::Types::STRING, :name => 'compaction_strategy', :optional => true},
+        COMPACTION_STRATEGY_OPTIONS => {:type => ::Thrift::Types::MAP, :name => 'compaction_strategy_options', :key => {:type => ::Thrift::Types::STRING}, :value => {:type => ::Thrift::Types::STRING}, :optional => true},
+        ROW_CACHE_KEYS_TO_SAVE => {:type => ::Thrift::Types::I32, :name => 'row_cache_keys_to_save', :optional => true},
+        COMPRESSION_OPTIONS => {:type => ::Thrift::Types::MAP, :name => 'compression_options', :key => {:type => ::Thrift::Types::STRING}, :value => {:type => ::Thrift::Types::STRING}, :optional => true}
       }
 
       def struct_fields; FIELDS; end
@@ -742,6 +755,7 @@ module CassandraCQL
       STRATEGY_OPTIONS = 3
       REPLICATION_FACTOR = 4
       CF_DEFS = 5
+      DURABLE_WRITES = 6
 
       FIELDS = {
         NAME => {:type => ::Thrift::Types::STRING, :name => 'name'},
@@ -749,7 +763,8 @@ module CassandraCQL
         STRATEGY_OPTIONS => {:type => ::Thrift::Types::MAP, :name => 'strategy_options', :key => {:type => ::Thrift::Types::STRING}, :value => {:type => ::Thrift::Types::STRING}, :optional => true},
         # @deprecated
         REPLICATION_FACTOR => {:type => ::Thrift::Types::I32, :name => 'replication_factor', :optional => true},
-        CF_DEFS => {:type => ::Thrift::Types::LIST, :name => 'cf_defs', :element => {:type => ::Thrift::Types::STRUCT, :class => CassandraCQL::Thrift::CfDef}}
+        CF_DEFS => {:type => ::Thrift::Types::LIST, :name => 'cf_defs', :element => {:type => ::Thrift::Types::STRUCT, :class => CassandraCQL::Thrift::CfDef}},
+        DURABLE_WRITES => {:type => ::Thrift::Types::BOOL, :name => 'durable_writes', :default => true, :optional => true}
       }
 
       def struct_fields; FIELDS; end
@@ -784,16 +799,44 @@ module CassandraCQL
       ::Thrift::Struct.generate_accessors self
     end
 
+    class CqlMetadata
+      include ::Thrift::Struct, ::Thrift::Struct_Union
+      NAME_TYPES = 1
+      VALUE_TYPES = 2
+      DEFAULT_NAME_TYPE = 3
+      DEFAULT_VALUE_TYPE = 4
+
+      FIELDS = {
+        NAME_TYPES => {:type => ::Thrift::Types::MAP, :name => 'name_types', :key => {:type => ::Thrift::Types::STRING, :binary => true}, :value => {:type => ::Thrift::Types::STRING}},
+        VALUE_TYPES => {:type => ::Thrift::Types::MAP, :name => 'value_types', :key => {:type => ::Thrift::Types::STRING, :binary => true}, :value => {:type => ::Thrift::Types::STRING}},
+        DEFAULT_NAME_TYPE => {:type => ::Thrift::Types::STRING, :name => 'default_name_type'},
+        DEFAULT_VALUE_TYPE => {:type => ::Thrift::Types::STRING, :name => 'default_value_type'}
+      }
+
+      def struct_fields; FIELDS; end
+
+      def validate
+        raise ::Thrift::ProtocolException.new(::Thrift::ProtocolException::UNKNOWN, 'Required field name_types is unset!') unless @name_types
+        raise ::Thrift::ProtocolException.new(::Thrift::ProtocolException::UNKNOWN, 'Required field value_types is unset!') unless @value_types
+        raise ::Thrift::ProtocolException.new(::Thrift::ProtocolException::UNKNOWN, 'Required field default_name_type is unset!') unless @default_name_type
+        raise ::Thrift::ProtocolException.new(::Thrift::ProtocolException::UNKNOWN, 'Required field default_value_type is unset!') unless @default_value_type
+      end
+
+      ::Thrift::Struct.generate_accessors self
+    end
+
     class CqlResult
       include ::Thrift::Struct, ::Thrift::Struct_Union
       TYPE = 1
       ROWS = 2
       NUM = 3
+      SCHEMA = 4
 
       FIELDS = {
         TYPE => {:type => ::Thrift::Types::I32, :name => 'type', :enum_class => CassandraCQL::Thrift::CqlResultType},
         ROWS => {:type => ::Thrift::Types::LIST, :name => 'rows', :element => {:type => ::Thrift::Types::STRUCT, :class => CassandraCQL::Thrift::CqlRow}, :optional => true},
-        NUM => {:type => ::Thrift::Types::I32, :name => 'num', :optional => true}
+        NUM => {:type => ::Thrift::Types::I32, :name => 'num', :optional => true},
+        SCHEMA => {:type => ::Thrift::Types::STRUCT, :name => 'schema', :class => CassandraCQL::Thrift::CqlMetadata, :optional => true}
       }
 
       def struct_fields; FIELDS; end

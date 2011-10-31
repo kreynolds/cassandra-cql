@@ -33,7 +33,7 @@ module CassandraCQL
       else
         res = Result.new(@handle.execute_cql_query(self.class.sanitize(@statement, bind_vars), CassandraCQL::Thrift::Compression::NONE), column_family)
       end
-    
+
       # Change our keyspace if required
       if @statement =~ KS_CHANGE_RE
         @handle.keyspace = $1
@@ -68,7 +68,7 @@ module CassandraCQL
         obj.map { |member| quote(member) }.join(",")
       elsif obj.kind_of?(String)
         "'" + obj + "'"
-      elsif obj.kind_of?(Fixnum)
+      elsif obj.kind_of?(Fixnum) or obj.kind_of?(Float)
         obj
       else
         raise Error::UnescapableObject, "Unable to escape object of class #{obj.class}"
@@ -78,7 +78,7 @@ module CassandraCQL
     def self.cast_to_cql(obj)
       if obj.kind_of?(Array)
         obj.map { |member| cast_to_cql(member) }
-      elsif obj.kind_of?(Fixnum)
+      elsif obj.kind_of?(Fixnum) or obj.kind_of?(Float)
         obj
       elsif obj.kind_of?(Time)
         UUID.new(obj).to_guid
@@ -89,7 +89,7 @@ module CassandraCQL
       elsif obj.kind_of?(String) and Utility.binary_data?(obj)
         escape(obj.unpack('H*')[0])
       else
-        escape(obj.to_s)
+        RUBY_VERSION >= "1.9" ? escape(obj.to_s.dup.force_encoding('ASCII-8BIT')) : escape(obj.to_s.dup)
       end
     end
   

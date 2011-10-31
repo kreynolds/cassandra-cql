@@ -196,10 +196,11 @@ describe "cast_to_cql" do
   
   context "with binary data" do
     it "should return an unpacked version" do
-      uuid = SimpleUUID::UUID.new
-      new_data = Statement.cast_to_cql(uuid.bytes)
-      new_data.should_not eq(uuid.bytes)
-      SimpleUUID::UUID.new([new_data].pack('H32')).should eq(uuid)
+      bytes = "binary\x00"
+      bytes = bytes.force_encoding('ASCII-8BIT') if RUBY_VERSION >= "1.9"
+      new_data = Statement.cast_to_cql(bytes)
+      new_data.should_not eq(bytes)
+      [new_data].pack('H*').should eq(bytes)
     end
   end
   
@@ -258,7 +259,7 @@ describe "sanitize" do
     it "should handle numbers and stuff appropriately" do
       Statement.sanitize(
         "insert into keyspace (key, ?) values (?)", [488, 60.368]
-      ).should eq("insert into keyspace (key, 488) values ('60.368')")
+      ).should eq("insert into keyspace (key, 488) values (60.368)")
     end
 
   end
