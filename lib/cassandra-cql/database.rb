@@ -83,13 +83,9 @@ module CassandraCQL
       @connection.describe_keyspaces.map { |keyspace| Schema.new(keyspace) }
     end
     
-    def update_schema!
-      if @keyspace.nil?
-        @schema = nil
-      else
-        # TODO: This should be replaced with a CQL call that doesn't exist yet
-        @schema = Schema.new(@connection.describe_keyspace(@keyspace))
-      end
+    def schema
+      # TODO: This should be replaced with a CQL call that doesn't exist yet
+      Schema.new(@connection.describe_keyspace(@keyspace))
     end
   end
 end

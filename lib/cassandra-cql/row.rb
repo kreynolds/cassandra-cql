@@ -2,8 +2,8 @@ module CassandraCQL
   class Row
     attr_reader :row
     
-    def initialize(row, column_family)
-      @row, @column_family = row, column_family
+    def initialize(row, schema)
+      @row, @schema = row, schema
     end
   
     def [](obj)
@@ -15,16 +15,12 @@ module CassandraCQL
 
     def column_names
       @names ||= @row.columns.map do |column|
-        if column.name == @column_family.key_alias
-          column.name
-        else
-          ColumnFamily.cast(column.name, @column_family.comparator_type)
-        end
+        ColumnFamily.cast(column.name, @schema.names[column.name])
       end
     end
   
     def column_values
-      @values ||= @row.columns.map { |column| ColumnFamily.cast(column.value, @column_family.columns[column.name]) }
+      @values ||= @row.columns.map { |column| ColumnFamily.cast(column.value, @schema.values[column.name]) }
     end
   
     def columns
@@ -41,7 +37,7 @@ module CassandraCQL
     end
   
     def key
-      ColumnFamily.cast(@row.key, @column_family.key_validation_class)
+      ColumnFamily.cast(@row.key, @schema.values[@row.key])
     end
   end
 end

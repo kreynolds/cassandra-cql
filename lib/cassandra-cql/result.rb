@@ -4,12 +4,28 @@ module CassandraCQL
     class InvalidCursor < Exception; end
   end
 
-  class Result
-    attr_reader :result, :column_family, :cursor
+  class ResultSchema
+    attr_reader :names, :values
 
-    def initialize(result, column_family=nil)
-      @result, @column_family = result, column_family
-      @column_family = @column_family.dup unless @column_family.nil?
+    def initialize(schema)
+      # When https://issues.apache.org/jira/browse/CASSANDRA-3436 is resolve, no more need to split/last
+      @names = Hash.new(schema.default_name_type.split(".").last)
+      schema.name_types.each_pair { |key, type|
+        @names[key] = type.split(".").last
+      }
+      @values = Hash.new(schema.default_value_type.split(".").last)
+      schema.value_types.each_pair { |key, type|
+        @values[key] = type.split(".").last
+      }
+    end
+  end
+  
+  class Result
+    attr_reader :result, :schema, :cursor
+
+    def initialize(result)
+      @result = result
+      @schema = ResultSchema.new(result.schema) if rows?
       @cursor = 0
     end
   
@@ -40,7 +56,7 @@ module CassandraCQL
       when CassandraCQL::Thrift::CqlResultType::ROWS
         return nil if @cursor >= rows
 
-        row = Row.new(@result.rows[@cursor], @column_family)
+        row = Row.new(@result.rows[@cursor], @schema)
         @cursor += 1
         return row
       when CassandraCQL::Thrift::CqlResultType::VOID

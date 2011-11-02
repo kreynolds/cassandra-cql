@@ -6,3 +6,4 @@ coverage
 .rspec-tm
 doc
 Gemfile.lock
+tmp

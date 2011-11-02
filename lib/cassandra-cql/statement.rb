@@ -7,9 +7,7 @@ module CassandraCQL
   class Statement
 
     KS_CHANGE_RE = /^use (\w+)/i
-    SCHEMA_CHANGE_RE = /\s*(create|drop|alter)\s+(\w+)/i
     KS_DROP_RE = /^drop keyspace (\w+)/i
-    COLFAM_RE = /\s*select.*from\s+'?(\w+)/i
 
     attr_reader :statement
 
@@ -23,30 +21,19 @@ module CassandraCQL
     end
   
     def execute(bind_vars=[], options={})
-      column_family = nil
-      if @statement =~ COLFAM_RE
-        column_family = @handle.schema.column_families[$1].dup
-      end
-
       if options[:compression]
-        res = Result.new(@handle.execute_cql_query(Utility.compress(self.class.sanitize(@statement, bind_vars)), CassandraCQL::Thrift::Compression::GZIP), column_family)
+        res = Result.new(@handle.execute_cql_query(Utility.compress(self.class.sanitize(@statement, bind_vars)), CassandraCQL::Thrift::Compression::GZIP))
       else
-        res = Result.new(@handle.execute_cql_query(self.class.sanitize(@statement, bind_vars), CassandraCQL::Thrift::Compression::NONE), column_family)
+        res = Result.new(@handle.execute_cql_query(self.class.sanitize(@statement, bind_vars), CassandraCQL::Thrift::Compression::NONE))
       end
 
       # Change our keyspace if required
       if @statement =~ KS_CHANGE_RE
         @handle.keyspace = $1
+      elsif @statement =~ KS_DROP_RE
+        @handle.keyspace = nil
       end
 
-      # If we are dropping a keyspace, we should set it to nil
-      @handle.keyspace = nil if @statement =~ KS_DROP_RE
-    
-      # Update the schema if it has changed
-      if @statement =~ KS_CHANGE_RE or @statement =~ SCHEMA_CHANGE_RE or @statement =~ KS_DROP_RE
-        @handle.update_schema!
-      end
-    
       # We let ints be fetched for now because they'll probably be deprecated later
       if res.void?
         nil

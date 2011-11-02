@@ -4,6 +4,16 @@ Bundler::GemHelper.install_tasks
 require 'rake'
 require 'rspec/core'
 require 'rspec/core/rake_task'
+
+CassandraBinaries = {
+  '0.8' => 'http://archive.apache.org/dist/cassandra/0.8.4/apache-cassandra-0.8.4-bin.tar.gz',
+  '1.0' => 'http://archive.apache.org/dist/cassandra/1.0.1/apache-cassandra-1.0.1-bin.tar.gz',
+}
+
+CASSANDRA_VERSION = ENV['CASSANDRA_VERSION'] || '1.0'
+CASSANDRA_HOME = File.dirname(__FILE__) + '/tmp'
+CASSANDRA_PIDFILE = ENV['CASSANDRA_PIDFILE'] || "#{CASSANDRA_HOME}/cassandra.pid"
+
 RSpec::Core::RakeTask.new(:spec) do |spec|
   spec.pattern = FileList['spec/**/*_spec.rb']
 end
@@ -14,15 +24,21 @@ RSpec::Core::RakeTask.new(:rcov) do |spec|
   spec.rcov_opts = "--exclude 'spec/*'"
 end
 
+desc "Download Cassandra and run specs against it"
+task :spec_with_server do
+  Rake::Task["cassandra:clean"].invoke
+  Rake::Task["cassandra:start"].invoke
+  error = nil
+  begin
+    Rake::Task["spec"].invoke
+  rescue
+    error = $!
+  end
+  Rake::Task["cassandra:stop"].invoke
+  raise $! if $!
+end
+
 task :default => :spec
-
-CassandraBinaries = {
-  '0.8' => 'http://archive.apache.org/dist/cassandra/0.8.4/apache-cassandra-0.8.4-bin.tar.gz'
-}
-
-CASSANDRA_HOME = ENV['CASSANDRA_HOME'] || "#{ENV['HOME']}/cassandra"
-CASSANDRA_VERSION = ENV['CASSANDRA_VERSION'] || '0.8'
-CASSANDRA_PIDFILE = ENV['CASSANDRA_PIDFILE'] || "#{CASSANDRA_HOME}/cassandra.pid"
 
 def setup_cassandra_version(version = CASSANDRA_VERSION)
   FileUtils.mkdir_p CASSANDRA_HOME
@@ -31,7 +47,7 @@ def setup_cassandra_version(version = CASSANDRA_VERSION)
 
   unless File.exists?(File.join(destination_directory, 'bin','cassandra'))
     download_source       = CassandraBinaries[CASSANDRA_VERSION]
-    download_destination  = File.join("/tmp", File.basename(download_source))
+    download_destination  = File.join(CASSANDRA_HOME, File.basename(download_source))
     untar_directory       = File.join(CASSANDRA_HOME,  File.basename(download_source,'-bin.tar.gz'))
 
     puts "downloading cassandra"
@@ -45,9 +61,9 @@ end
 def setup_environment
   env = ""
   if !ENV["CASSANDRA_INCLUDE"]
-    env << "CASSANDRA_INCLUDE=#{File.expand_path(Dir.pwd)}/conf/#{CASSANDRA_VERSION}/cassandra.in.sh "
+    env << "CASSANDRA_INCLUDE=#{File.expand_path(Dir.pwd)}/spec/conf/#{CASSANDRA_VERSION}/cassandra.in.sh "
     env << "CASSANDRA_HOME=#{CASSANDRA_HOME}/cassandra-#{CASSANDRA_VERSION} "
-    env << "CASSANDRA_CONF=#{File.expand_path(Dir.pwd)}/conf/#{CASSANDRA_VERSION}"
+    env << "CASSANDRA_CONF=#{File.expand_path(Dir.pwd)}/spec/conf/#{CASSANDRA_VERSION}"
   else
     env << "CASSANDRA_INCLUDE=#{ENV['CASSANDRA_INCLUDE']} "
     env << "CASSANDRA_HOME=#{ENV['CASSANDRA_HOME']} "
@@ -85,6 +101,8 @@ namespace :cassandra do
     Dir.chdir(File.join(CASSANDRA_HOME, "cassandra-#{CASSANDRA_VERSION}")) do
       sh("env #{env} bin/cassandra #{'-f' unless args.daemonize} -p #{CASSANDRA_PIDFILE}")
     end
+    $stdout.puts "Sleeping for 8 seconds to wait for Cassandra to start ..."
+    sleep(8)
   end
 
   desc "Stop Cassandra"
@@ -93,6 +111,12 @@ namespace :cassandra do
     env = setup_environment
     sh("kill $(cat #{CASSANDRA_PIDFILE})")
   end
+  
+  desc "Delete all data files in #{CASSANDRA_HOME}"
+  task :clean do
+    sh("rm -rf #{File.join(CASSANDRA_HOME, "cassandra-#{CASSANDRA_VERSION}", 'data')}")
+  end
+  
 end
 
 desc "Start Cassandra"
@@ -121,29 +145,6 @@ task :java do
     exit(1)
   end
 end
-
-namespace :data do
-  desc "Reset test data"
-  task :reset do
-    puts "Resetting test data"
-    sh("rm -rf #{File.join(CASSANDRA_HOME, "cassandra-#{CASSANDRA_VERSION}", 'data')}")
-  end
-
-  desc "Load test data structures."
-  task :load do
-    schema_path = "#{File.expand_path(Dir.pwd)}/conf/#{CASSANDRA_VERSION}/schema.txt"
-    puts "Loading test data structures."
-    Dir.chdir(File.join(CASSANDRA_HOME, "cassandra-#{CASSANDRA_VERSION}")) do
-      begin
-        sh("bin/cassandra-cli --host localhost --batch < #{schema_path}")
-      rescue
-        puts "Schema already loaded."
-      end
-    end
-  end
-end
-
-#task :spec => 'data:load'
 
 require 'yard'
 YARD::Rake::YardocTask.new

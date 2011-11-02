@@ -1,0 +1,10 @@
+create keyspace TypeConversions with
+  placement_strategy = 'org.apache.cassandra.locator.LocalStrategy' AND
+  strategy_options = [{replication_factor:1}];
+use TypeConversions;
+create column family UUIDColumnConversion with comparator = TimeUUIDType;
+create column family SuperUUID with comparator = TimeUUIDType and column_type = Super;
+create column family IntegerConversion with comparator = 'IntegerType';
+create column family LongConversion with comparator = 'LongType';
+create column family CounterConversion with comparator = 'UTF8Type' and
+  default_validation_class = CounterColumnType;
