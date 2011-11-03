@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Kelley Reynolds"]
   s.email       = ["kelley@insidesystems.net"]
-  s.homepage    = "http://rubygems.org/gems/cassandra-cql"
+  s.homepage    = "http://code.google.com/a/apache-extras.org/p/cassandra-ruby/"
   s.summary     = "CQL Interface to Cassandra"
   s.description = "CQL Interface to Cassandra"
 
