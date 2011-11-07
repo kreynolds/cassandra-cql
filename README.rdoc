@@ -69,10 +69,3 @@ So adding a feature like counters just requires teaching the CQL parser to under
 
   # Delete the swarthy bastard Kevin
   db.execute("DELETE FROM users WHERE id=?", 'kway')
-  
-=TODO
-
-  1. Make bind_var usage friendlier
-  2. Determine if returning Time objects for TimeUUID is appropriate in all cases and if not, add an option
-  3. Add yardoc
-  4. Add spec for database
