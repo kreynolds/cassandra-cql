@@ -78,6 +78,27 @@ describe "Comparator Roundtrip tests" do
     end
   end
 
+  context "with date comparator" do
+    let(:cf_name) { "comparator_cf_date" }
+    before(:each) { create_column_family(cf_name, 'DateType') }
+
+    it "should return a Time object" do
+      ts = Time.new
+      res = create_and_fetch_column(cf_name, ts)
+      res.to_f.should be_within(0.001).of(ts.to_f)
+      res.should be_kind_of(Time)
+    end
+    
+    it "should return a timestamp given a date" do
+      date = Date.today
+      res = create_and_fetch_column(cf_name, date)
+      [:year, :month, :day].each do |sym|
+        res.send(sym).should eq(date.send(sym))
+      end
+      res.class.should eq(Time)
+    end
+    
+  end
 
   context "with decimal comparator" do
     let(:cf_name) { "comparator_cf_decimal" }

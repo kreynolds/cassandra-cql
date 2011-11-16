@@ -9,7 +9,8 @@ describe "Validation Roundtrip tests" do
 
   def create_and_fetch_column(column_family, value)
     @connection.execute("insert into #{column_family} (id, test_column) values (?, ?)", 'test', value)
-    return @connection.execute("select test_column from #{column_family} where id = ?", 'test').fetch[0]
+    res = @connection.execute("select test_column from #{column_family} where id = ?", 'test')
+    return res.fetch[0]
   end
 
   def create_column_family(name, test_column_type, opts="")
@@ -197,8 +198,19 @@ describe "Validation Roundtrip tests" do
     before(:each) { create_column_family(cf_name, 'timestamp') }
 
     it "should return a timestamp" do
-      uuid = UUID.new
-      #create_and_fetch_column(cf_name, uuid).should eq(uuid)
+      ts = Time.new
+      res = create_and_fetch_column(cf_name, ts)
+      res.to_f.should be_within(0.001).of(ts.to_f)
+      res.class.should eq(Time)
+    end
+
+    it "should return a timestamp given a date" do
+      date = Date.today
+      res = create_and_fetch_column(cf_name, date)
+      [:year, :month, :day].each do |sym|
+        res.send(sym).should eq(date.send(sym))
+      end
+      res.class.should eq(Time)
     end
   end
 

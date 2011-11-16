@@ -100,17 +100,19 @@ end
 
 describe "cast_to_cql" do
   context "with a Time object" do
-    it "should return a guid of a UUID" do
+    it "should return a Time object with the number of microseconds since epoch" do
       ts = Time.new - 86400 # set it to yesterday just to be sure no defaulting to today misses an error
-      guid = Statement.cast_to_cql(ts)
-      guid.should be_kind_of(String)
-      expect {
-        ret = UUID.new(guid)
-        uuid_ts = Time.at(ret.seconds)
-        [:year, :month, :day, :hour, :min, :sec].each do |sym|
-          uuid_ts.send(sym).should eq(ts.send(sym))
-        end
-      }.to_not raise_error
+      long = Statement.cast_to_cql(ts)
+      long.should be_kind_of(Integer)
+      Time.at(long / 1000.0).to_f.should be_within(0.001).of(ts.to_f)
+    end
+  end
+  
+  context "with a Date object" do
+    it "should return a corresponding Time object" do
+      date = Date.today << 1
+      str = Statement.cast_to_cql(date)
+      str.should eq(date.strftime('%Y-%m-%d'))
     end
   end
   

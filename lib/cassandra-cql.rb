@@ -18,11 +18,13 @@ here = File.dirname(__FILE__)
 require "#{here}/../vendor/gen-rb/cassandra"
 
 require 'bigdecimal'
+require 'date'
 require 'thrift_client'
 require 'cassandra-cql/types/abstract_type'
 require 'cassandra-cql/types/ascii_type'
 require 'cassandra-cql/types/boolean_type'
 require 'cassandra-cql/types/bytes_type'
+require 'cassandra-cql/types/date_type'
 require 'cassandra-cql/types/decimal_type'
 require 'cassandra-cql/types/double_type'
 require 'cassandra-cql/types/float_type'

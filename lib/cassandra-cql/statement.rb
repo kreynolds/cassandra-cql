@@ -83,8 +83,10 @@ module CassandraCQL
         obj.map { |member| cast_to_cql(member) }
       elsif obj.kind_of?(Fixnum) or obj.kind_of?(Float)
         obj
+      elsif obj.kind_of?(Date)
+        obj.strftime('%Y-%m-%d')
       elsif obj.kind_of?(Time)
-        UUID.new(obj).to_guid
+        (obj.to_f * 1000).to_i
       elsif obj.kind_of?(UUID)
         obj.to_guid
       # There are corner cases where this is an invalid assumption but they are extremely rare.
