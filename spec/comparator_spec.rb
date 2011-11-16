@@ -109,13 +109,12 @@ describe "Comparator Roundtrip tests" do
       create_and_fetch_column(cf_name, value*-1).should eq(value*-1)
     end
   
-# These tests currently crash the node
-    it "should return a small decimal" #do
-#      test_for_value(15.333)
-#    end
-    it "should return a huge decimal" #do
-#      test_for_value(BigDecimal.new('129182739481237481341234123411.1029348102934810293481039'))
-#    end
+    it "should return a small decimal" do
+      test_for_value(15.333)
+    end
+    it "should return a huge decimal" do
+      test_for_value(BigDecimal.new('129182739481237481341234123411.1029348102934810293481039'))
+    end
   end
 
   context "with double comparator" do
