@@ -34,12 +34,6 @@ describe "basic methods" do
     end
   end
   
-  context "key" do
-    it "should return the cql_result row key" do
-      @row.key.should eq(@row.row.key)
-    end
-  end
-
   context "checking casting" do
     it "should return column_values for to_a" do
       @row.to_a.should eq(@row.column_values)

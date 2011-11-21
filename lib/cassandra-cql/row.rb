@@ -23,7 +23,6 @@ module CassandraCQL
     end
   
     def [](obj)
-      # Rows include the row key so we skip the first one
       column_index = obj.kind_of?(Fixnum) ? obj : column_names.index(obj)
       return nil if column_index.nil?
       column_values[column_index]
@@ -50,10 +49,6 @@ module CassandraCQL
     # TODO: This should be an ordered hash
     def to_hash
       Hash[([column_names, column_values]).transpose]
-    end
-  
-    def key
-      ColumnFamily.cast(@row.key, @schema.values[@row.key])
     end
   end
 end
