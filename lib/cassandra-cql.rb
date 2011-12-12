@@ -14,8 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 =end
 
+module CassandraCQL; end;
+unless CassandraCQL.respond_to?(:VERSION)
+  require "cassandra-cql/1.0"
+end
+
 here = File.expand_path(File.dirname(__FILE__))
-require "#{here}/../vendor/1.0/gen-rb/cassandra"
+require "#{here}/../vendor/#{CassandraCQL.VERSION}/gen-rb/cassandra"
 
 require 'bigdecimal'
 require 'date'
