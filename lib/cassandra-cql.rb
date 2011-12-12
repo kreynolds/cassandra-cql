@@ -14,8 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 =end
 
-here = File.dirname(__FILE__)
-require "#{here}/../vendor/gen-rb/cassandra"
+here = File.expand_path(File.dirname(__FILE__))
+require "#{here}/../vendor/1.0/gen-rb/cassandra"
 
 require 'bigdecimal'
 require 'date'
