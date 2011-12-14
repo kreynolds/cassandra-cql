@@ -97,23 +97,24 @@ describe "Comparator Roundtrip tests" do
       end
       res.class.should eq(Time)
     end
-    
   end
 
-  context "with decimal comparator" do
-    let(:cf_name) { "comparator_cf_decimal" }
-    before(:each) { create_column_family(cf_name, 'DecimalType') }
+  if CASSANDRA_VERSION.to_f >= 1.0
+    context "with decimal comparator" do
+      let(:cf_name) { "comparator_cf_decimal" }
+      before(:each) { create_column_family(cf_name, 'DecimalType') }
 
-    def test_for_value(value)
-      create_and_fetch_column(cf_name, value).should eq(value)
-      create_and_fetch_column(cf_name, value*-1).should eq(value*-1)
-    end
-  
-    it "should return a small decimal" do
-      test_for_value(15.333)
-    end
-    it "should return a huge decimal" do
-      test_for_value(BigDecimal.new('129182739481237481341234123411.1029348102934810293481039'))
+      def test_for_value(value)
+        create_and_fetch_column(cf_name, value).should eq(value)
+        create_and_fetch_column(cf_name, value*-1).should eq(value*-1)
+      end
+
+      it "should return a small decimal" do
+        test_for_value(15.333)
+      end
+      it "should return a huge decimal" do
+        test_for_value(BigDecimal.new('129182739481237481341234123411.1029348102934810293481039'))
+      end
     end
   end
 
@@ -151,26 +152,29 @@ describe "Comparator Roundtrip tests" do
     end
   end
 
-  context "with int comparator" do
-    let(:cf_name) { "comparator_cf_int" }
-    before(:each) { create_column_family(cf_name, 'Int32Type') }
+  if CASSANDRA_VERSION.to_f >= 1.0
+    #Int32Type was added in 1.0 (CASSANDRA-3031)
+    context "with int comparator" do
+      let(:cf_name) { "comparator_cf_int" }
+      before(:each) { create_column_family(cf_name, 'Int32Type') }
 
-    def test_for_value(value)
-      create_and_fetch_column(cf_name, value).should eq(value)
-      create_and_fetch_column(cf_name, value*-1).should eq(value*-1)
-    end
-  
-    it "should properly convert integer values that fit into 1 byte" do
-      test_for_value(1)
-    end
-    it "should properly convert integer values that fit into 2 bytes" do
-      test_for_value(2**8 + 80)
-    end
-    it "should properly convert integer values that fit into 3 bytes" do
-      test_for_value(2**16 + 622)
-    end
-    it "should properly convert integer values that fit into 4 bytes" do
-      test_for_value(2**24 + 45820)
+      def test_for_value(value)
+        create_and_fetch_column(cf_name, value).should eq(value)
+        create_and_fetch_column(cf_name, value*-1).should eq(value*-1)
+      end
+
+      it "should properly convert integer values that fit into 1 byte" do
+        test_for_value(1)
+      end
+      it "should properly convert integer values that fit into 2 bytes" do
+        test_for_value(2**8 + 80)
+      end
+      it "should properly convert integer values that fit into 3 bytes" do
+        test_for_value(2**16 + 622)
+      end
+      it "should properly convert integer values that fit into 4 bytes" do
+        test_for_value(2**24 + 45820)
+      end
     end
   end
 
