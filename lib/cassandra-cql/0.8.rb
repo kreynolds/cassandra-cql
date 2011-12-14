@@ -1,5 +1,5 @@
 module CassandraCQL
-  def self.VERSION
+  def self.CASSANDRA_VERSION
     "0.8"
   end
 end

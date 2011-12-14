@@ -31,17 +31,20 @@ module CassandraCQL
       @handle = handle
       prepare(statement)
     end
-  
+
     def prepare(statement)
       @statement = statement
     end
-  
+
     def execute(bind_vars=[], options={})
+      sanitized_query = self.class.sanitize(@statement, bind_vars)
+      compression_type = CassandraCQL::Thrift::Compression::NONE
       if options[:compression]
-        res = Result.new(@handle.execute_cql_query(Utility.compress(self.class.sanitize(@statement, bind_vars)), CassandraCQL::Thrift::Compression::GZIP))
-      else
-        res = Result.new(@handle.execute_cql_query(self.class.sanitize(@statement, bind_vars), CassandraCQL::Thrift::Compression::NONE))
+        compression_type = CassandraCQL::Thrift::Compression::GZIP
+        sanitized_query = Utility.compress(sanitized_query)
       end
+
+      res = Result.new(@handle.execute_cql_query(sanitized_query, compression_type))
 
       # Change our keyspace if required
       if @statement =~ KS_CHANGE_RE
