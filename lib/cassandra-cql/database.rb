@@ -60,7 +60,7 @@ module CassandraCQL
 
     def reset!
       disconnect!
-      reconnect!
+      connect!
     end
     alias_method :reconnect!, :reset!
 
