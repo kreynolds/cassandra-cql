@@ -64,8 +64,15 @@ module CassandraCQL
     end
     alias_method :reconnect!, :reset!
 
+    def statement_class
+      return @statement_class if @statement_class
+
+      version_module = 'V' + CassandraCQL.CASSANDRA_VERSION.gsub('.', '')
+      return @statement_class = CassandraCQL.const_get(version_module).const_get(:Statement)
+    end
+
     def prepare(statement, options={}, &block)
-      stmt = Statement.new(self, statement)
+      stmt = statement_class.new(self, statement)
       if block_given?
         yield stmt
       else
@@ -74,7 +81,7 @@ module CassandraCQL
     end
 
     def execute(statement, *bind_vars)
-      result = Statement.new(self, statement).execute(bind_vars)
+      result = statement_class.new(self, statement).execute(bind_vars)
       if block_given?
         yield result
       else

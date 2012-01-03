@@ -56,7 +56,11 @@ describe "Validation Roundtrip tests" do
 
   context "with blob validation" do
     let(:cf_name) { "validation_cf_blob" }
-    before(:each) { create_column_family(cf_name, 'blob') }
+    if CASSANDRA_VERSION.to_f == 0.8
+      before(:each) { create_column_family(cf_name, 'bytea') }
+    else
+      before(:each) { create_column_family(cf_name, 'blob') }
+    end
 
     it "should return a blob" do
       bytes = "binary\x00"
@@ -102,20 +106,22 @@ describe "Validation Roundtrip tests" do
     end
   end
 
-  context "with decimal validation" do
-    let(:cf_name) { "validation_cf_decimal" }
-    before(:each) { create_column_family(cf_name, 'decimal') }
+  if CASSANDRA_VERSION.to_f >= 1.0
+    context "with decimal validation" do
+      let(:cf_name) { "validation_cf_decimal" }
+      before(:each) { create_column_family(cf_name, 'decimal') }
 
-    def test_for_value(value)
-      create_and_fetch_column(cf_name, value).should eq(value)
-      create_and_fetch_column(cf_name, value*-1).should eq(value*-1)
-    end
-  
-    it "should return a small decimal" do
-      test_for_value(15.333)
-    end
-    it "should return a huge decimal" do
-      test_for_value(BigDecimal.new('129182739481237481341234123411.1029348102934810293481039'))
+      def test_for_value(value)
+        create_and_fetch_column(cf_name, value).should eq(value)
+        create_and_fetch_column(cf_name, value*-1).should eq(value*-1)
+      end
+
+      it "should return a small decimal" do
+        test_for_value(15.333)
+      end
+      it "should return a huge decimal" do
+        test_for_value(BigDecimal.new('129182739481237481341234123411.1029348102934810293481039'))
+      end
     end
   end
 
@@ -195,7 +201,11 @@ describe "Validation Roundtrip tests" do
 
   context "with timestamp validation" do
     let(:cf_name) { "validation_cf_timestamp" }
-    before(:each) { create_column_family(cf_name, 'timestamp') }
+    if CASSANDRA_VERSION.to_f == 0.8
+      before(:each) { create_column_family(cf_name, 'date') }
+    else
+      before(:each) { create_column_family(cf_name, 'timestamp') }
+      end
 
     it "should return a timestamp" do
       ts = Time.new

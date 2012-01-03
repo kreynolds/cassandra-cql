@@ -6,12 +6,12 @@ require 'rspec/core'
 require 'rspec/core/rake_task'
 
 CassandraBinaries = {
-  '0.8' => 'http://archive.apache.org/dist/cassandra/0.8.4/apache-cassandra-0.8.4-bin.tar.gz',
-  '1.0' => 'http://archive.apache.org/dist/cassandra/1.0.1/apache-cassandra-1.0.1-bin.tar.gz',
+  '0.8' => 'http://archive.apache.org/dist/cassandra/0.8.8/apache-cassandra-0.8.8-bin.tar.gz',
+  '1.0' => 'http://archive.apache.org/dist/cassandra/1.0.5/apache-cassandra-1.0.5-bin.tar.gz',
 }
 
 CASSANDRA_VERSION = ENV['CASSANDRA_VERSION'] || '1.0'
-CASSANDRA_HOME = File.dirname(__FILE__) + '/tmp'
+CASSANDRA_HOME = ENV['CASSANDRA_HOME'] || File.dirname(__FILE__) + '/tmp'
 CASSANDRA_PIDFILE = ENV['CASSANDRA_PIDFILE'] || "#{CASSANDRA_HOME}/cassandra.pid"
 
 RSpec::Core::RakeTask.new(:spec) do |spec|
@@ -111,12 +111,12 @@ namespace :cassandra do
     env = setup_environment
     sh("kill $(cat #{CASSANDRA_PIDFILE})")
   end
-  
+
   desc "Delete all data files in #{CASSANDRA_HOME}"
   task :clean do
     sh("rm -rf #{File.join(CASSANDRA_HOME, "cassandra-#{CASSANDRA_VERSION}", 'data')}")
   end
-  
+
 end
 
 desc "Start Cassandra"
