@@ -42,6 +42,7 @@ module CassandraCQL
       obj = self
       @connection.add_callback(:post_connect) do
         execute("USE #{@keyspace}")
+        @connection.login(@auth_request) if @auth_request
       end
     end
   
@@ -109,6 +110,16 @@ module CassandraCQL
     def schema
       # TODO: This should be replaced with a CQL call that doesn't exist yet
       Schema.new(@connection.describe_keyspace(@keyspace))
+    end
+
+    def login!(username, password)
+      request = CassandraCQL::Thrift::AuthenticationRequest.new
+      request.credentials = {'username' => username, 'password' => password}
+      ret = @connection.login(request)
+      # To avoid a double login on the initial connect, we set
+      # @auth_request after the first successful login.
+      @auth_request = request
+      ret
     end
   end
 end
