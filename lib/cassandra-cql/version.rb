@@ -15,5 +15,5 @@ limitations under the License.
 =end
 
 module CassandraCQL
-  VERSION = "1.0.3"
+  VERSION = "1.0.4"
 end
