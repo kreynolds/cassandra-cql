@@ -42,6 +42,7 @@ module CassandraCQL
       obj = self
       @connection.add_callback(:post_connect) do
         execute("USE #{@keyspace}")
+        @connection.login(@auth_request) if @auth_request
       end
     end
   
@@ -60,12 +61,19 @@ module CassandraCQL
 
     def reset!
       disconnect!
-      reconnect!
+      connect!
     end
     alias_method :reconnect!, :reset!
 
+    def statement_class
+      return @statement_class if @statement_class
+
+      version_module = 'V' + CassandraCQL.CASSANDRA_VERSION.gsub('.', '')
+      return @statement_class = CassandraCQL.const_get(version_module).const_get(:Statement)
+    end
+
     def prepare(statement, options={}, &block)
-      stmt = Statement.new(self, statement)
+      stmt = statement_class.new(self, statement)
       if block_given?
         yield stmt
       else
@@ -74,7 +82,7 @@ module CassandraCQL
     end
 
     def execute(statement, *bind_vars)
-      result = Statement.new(self, statement).execute(bind_vars)
+      result = statement_class.new(self, statement).execute(bind_vars)
       if block_given?
         yield result
       else
@@ -102,6 +110,16 @@ module CassandraCQL
     def schema
       # TODO: This should be replaced with a CQL call that doesn't exist yet
       Schema.new(@connection.describe_keyspace(@keyspace))
+    end
+
+    def login!(username, password)
+      request = CassandraCQL::Thrift::AuthenticationRequest.new
+      request.credentials = {'username' => username, 'password' => password}
+      ret = @connection.login(request)
+      # To avoid a double login on the initial connect, we set
+      # @auth_request after the first successful login.
+      @auth_request = request
+      ret
     end
   end
 end
