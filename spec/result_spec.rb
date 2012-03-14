@@ -158,6 +158,11 @@ describe "row results" do
       hash.should be_kind_of(Hash)
       hash.should eq(row.to_hash)
     end
+
+    it "should return nil where there is no row to fetch" do
+      2.times { @result.fetch }
+      @result.fetch_hash.should be_nil
+    end
   end
   
   context "fetch_hash_with a block" do
