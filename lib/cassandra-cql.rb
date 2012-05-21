@@ -16,7 +16,7 @@ limitations under the License.
 
 module CassandraCQL; end;
 unless CassandraCQL.respond_to?(:CASSANDRA_VERSION)
-  require "cassandra-cql/1.0"
+  require "cassandra-cql/1.1"
 end
 
 here = File.expand_path(File.dirname(__FILE__))

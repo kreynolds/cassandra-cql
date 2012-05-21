@@ -32,6 +32,7 @@ module CassandraCQL
       }.merge(thrift_client_options)
 
       @keyspace = @options[:keyspace]
+      @cql_version = @options[:cql_version]
       @servers = servers
       connect!
       execute("USE #{@keyspace}")
@@ -41,6 +42,7 @@ module CassandraCQL
       @connection = ThriftClient.new(CassandraCQL::Thrift::Client, @servers, @thrift_client_options)
       obj = self
       @connection.add_callback(:post_connect) do
+        @connection.set_cql_version(@cql_version) if @cql_version
         execute("USE #{@keyspace}")
         @connection.login(@auth_request) if @auth_request
       end
