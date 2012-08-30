@@ -104,10 +104,12 @@ module CassandraCQL
           end
         end
       else
-        if (row = fetch_row).kind_of?(Fixnum)
-          {row => row}
-        else
-          row.to_hash
+        if row = fetch_row
+          if row.kind_of?(Fixnum)
+            {row => row}
+          else
+            row.to_hash
+          end
         end
       end
     end
