@@ -74,7 +74,7 @@ module CassandraCQL
         obj.map { |member| quote(member) }.join(",")
       elsif obj.kind_of?(String)
         "'" + obj + "'"
-      elsif obj.kind_of?(Fixnum) or obj.kind_of?(Float)
+      elsif obj.kind_of?(Numeric)
         obj
       else
         raise Error::UnescapableObject, "Unable to escape object of class #{obj.class}"
