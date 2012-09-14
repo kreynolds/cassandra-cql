@@ -19,6 +19,8 @@ module CassandraCQL
     class UUIDType < AbstractType
       def self.cast(value)
         UUID.new(value)
+      rescue => e
+        raise CassandraCQL::Error::CastException, "Unable to convert bytes to UUID: #{value.inspect}", caller
       end
     end
     

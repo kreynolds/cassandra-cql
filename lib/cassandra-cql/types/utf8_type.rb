@@ -19,6 +19,8 @@ module CassandraCQL
     class UTF8Type < AbstractType
       def self.cast(value)
         RUBY_VERSION >= "1.9" ? value.to_s.dup.force_encoding('UTF-8') : value.to_s.dup
+      rescue => e
+        raise CassandraCQL::Error::CastException, "Unable to convert bytes to UTF8: #{bytes.inspect}", caller
       end
     end
   end

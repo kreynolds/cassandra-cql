@@ -18,7 +18,12 @@ module CassandraCQL
   module Types
     class BooleanType < AbstractType
       def self.cast(value)
+        # Do not assume that an empty string is false
+        raise if value.empty?
+
         value.unpack('C') == [1]
+      rescue
+        raise Error::CastException.new("Unable to convert bytes to boolean", value)
       end
     end
   end

@@ -19,6 +19,8 @@ module CassandraCQL
     class DateType < AbstractType
       def self.cast(value)
         Time.at(bytes_to_long(value) / 1000.0)
+      rescue
+        raise Error::CastException.new("Unable to convert bytes to Date", value)
       end
     end
   end

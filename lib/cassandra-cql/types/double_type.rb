@@ -18,7 +18,12 @@ module CassandraCQL
   module Types
     class DoubleType < AbstractType
       def self.cast(value)
+        # Do not return nil, this should be an error
+        raise if value.empty?
+
         value.unpack('G')[0]
+      rescue
+        raise Error::CastException.new("Unable to convert bytes to double", value)
       end
     end
   end

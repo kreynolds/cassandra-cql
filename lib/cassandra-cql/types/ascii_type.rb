@@ -19,6 +19,8 @@ module CassandraCQL
     class AsciiType < AbstractType
       def self.cast(value)
         RUBY_VERSION >= "1.9" ? value.to_s.dup.force_encoding('ASCII-8BIT') : value.to_s.dup
+      rescue
+        raise Error::CastException.new("Unable to convert bytes to ascii", value)
       end
     end
   end

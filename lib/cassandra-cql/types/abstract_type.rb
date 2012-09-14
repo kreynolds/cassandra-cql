@@ -15,6 +15,17 @@ limitations under the License.
 =end
 
 module CassandraCQL
+  module Error
+    class CastException < Exception
+      attr_reader :bytes
+
+      def initialize(message = nil, bytes = nil)
+        super(message)
+        @bytes = bytes
+      end
+    end
+  end
+
   module Types
     class AbstractType
       def self.cast(value)
@@ -31,6 +42,8 @@ module CassandraCQL
           int = int - (1 << bytes.length * 8)
         end
         int
+      rescue
+        raise Error::CastException.new("Unable to convert bytes to int", bytes)
       end
 
       def self.bytes_to_long(bytes)
@@ -41,6 +54,8 @@ module CassandraCQL
         else
           val
         end
+      rescue
+        raise Error::CastException.new("Unable to convert bytes to long", bytes)
       end
     end
   end
