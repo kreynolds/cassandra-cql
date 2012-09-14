@@ -15,7 +15,12 @@ Gem::Specification.new do |s|
   s.rubyforge_project         = "cassandra-cql"
 
   s.add_development_dependency "bundler", ">= 1.0.0"
-  s.add_development_dependency "rcov", ">= 0.9.9"
+
+  if RUBY_VERSION >= "1.9"
+    s.add_development_dependency "simplecov"
+  else
+    s.add_development_dependency "rcov", ">= 0.9.9"
+  end
   s.add_development_dependency "rspec", ">= 2.6.0"
   s.add_development_dependency "rake", ">= 0.9.2"
   s.add_development_dependency "yard", ">= 0.7.2"
