@@ -3,6 +3,7 @@ if RUBY_VERSION >= "1.9"
   SimpleCov.start
 end
 
+require 'rubygems'
 require 'yaml'
 require 'rspec'
 
