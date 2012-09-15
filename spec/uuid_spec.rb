@@ -16,7 +16,9 @@ describe "UUID" do
 
   it "should instantiate from a Time object" do
     ts = Time.new
-    UUID.new(ts).to_time.should eq(ts)
+    # Nanosecond precision is available on some platforms but not in UUIDv1 so they may not match, just be v.close
+    # Note that the time returned from two UUIDs using these two timestamps will still be the same
+    (UUID.new(ts).to_time - ts).should < 0.000001
   end
   
   it "should turn have a to_time class method that takes bytes" do
