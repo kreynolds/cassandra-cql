@@ -1,4 +1,4 @@
-# Cassandra
+# Cassandra [![Build Status](https://secure.travis-ci.org/kreynolds/cassandra-cql.png)](http://travis-ci.org/kreynolds/cassandra-cql)
 The Apache Cassandra Project (http://cassandra.apache.org) develops a highly scalable second-generation distributed database, bringing together Dynamo's fully distributed design and Bigtable's ColumnFamily-based data model.
 
 # CQL
