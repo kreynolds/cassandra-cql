@@ -62,7 +62,7 @@ describe "ColumnFamily class" do
 
     it "should turn a packed long into a number" do
       number = 2**33
-      packed = [number >> 32, number].pack("N*")
+      packed = [number >> 32, number % 2**32].pack("N*")
 
       ColumnFamily.cast(packed, "LongType").should eq(number)
       ColumnFamily.cast(packed, "CounterColumnType").should eq(number)
@@ -70,7 +70,7 @@ describe "ColumnFamily class" do
 
     it "should turn a packed negative long into a negative number" do
       number = -2**33
-      packed = [number >> 32, number].pack("N*")
+      packed = [number >> 32, number % 2**32].pack("N*")
 
       ColumnFamily.cast(packed, "LongType").should eq(number)
       ColumnFamily.cast(packed, "CounterColumnType").should eq(number)
