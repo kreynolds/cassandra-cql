@@ -20,12 +20,27 @@ module CassandraCQL
     
     def initialize(row, schema)
       @row, @schema = row, schema
+      @value_cache = Hash.new { |h, key|
+        # If it's a number and not one of our columns, assume it's an index
+        if key.kind_of?(Fixnum) and !column_names.include?(key)
+          column_name = column_names[key]
+          column_index = key
+        else
+          column_name = key
+          column_index = column_names.index(key)
+        end
+        
+        if column_index.nil?
+          # Cache negative hits
+          h[column_name] = nil
+        else
+          h[column_name] = ColumnFamily.cast(@row.columns[column_index].value, @schema.values[@row.columns[column_index].name])
+        end
+      }
     end
   
     def [](obj)
-      column_index = obj.kind_of?(Fixnum) ? obj : column_names.index(obj)
-      return nil if column_index.nil?
-      column_values[column_index]
+      @value_cache[obj]
     end
 
     def column_names
@@ -35,7 +50,9 @@ module CassandraCQL
     end
   
     def column_values
-      @values ||= @row.columns.map { |column| ColumnFamily.cast(column.value, @schema.values[column.name]) }
+      @row.columns.map { |column|
+        @value_cache[column.name]
+      }
     end
   
     def columns

@@ -74,5 +74,8 @@ So adding a feature like counters just requires teaching the CQL parser to under
 
 ## Changing Validation on Columns with existing/unvalidatable data
 
-  If you have existing data and change the validation on a column, a CastException will be raised.
-  Currently the whole row is cast when accessing a single member but this will be addressed in a future version.
+  If you have existing data and change the validation on a column in an incompatible
+  way (ie. blank strings with a column validated as Integer), a CastException will be raised.
+  The exception has a 'bytes' attribute that will give you access to the bytes that caused the problem.
+  
+  Other columns in a row can still be accessible via index or column_name without raising that exception.
