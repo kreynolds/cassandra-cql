@@ -22,7 +22,7 @@ def yaml_fixture(file)
 end
 
 def setup_cassandra_connection
-  connection = CassandraCQL::Database.new(["127.0.0.1:9160"], {}, :retries => 5, :timeout => 1, :connect_timeout => 5)
+  connection = CassandraCQL::Database.new(["127.0.0.1:9160"], {}, :retries => 5, :timeout => 1)
   if !connection.keyspaces.map(&:name).include?("CassandraCQLTestKeyspace")
     connection.execute("CREATE KEYSPACE CassandraCQLTestKeyspace WITH strategy_class='org.apache.cassandra.locator.SimpleStrategy' AND strategy_options:replication_factor=1")
   end

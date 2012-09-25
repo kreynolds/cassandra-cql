@@ -28,7 +28,8 @@ module CassandraCQL
       }.merge(options)
 
       @thrift_client_options = {
-        :exception_class_overrides => CassandraCQL::Thrift::InvalidRequestException
+        :exception_class_overrides => CassandraCQL::Thrift::InvalidRequestException,
+        :connect_timeout => 5
       }.merge(thrift_client_options)
 
       @keyspace = @options[:keyspace]
