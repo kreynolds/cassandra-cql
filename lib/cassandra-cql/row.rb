@@ -50,9 +50,9 @@ module CassandraCQL
     end
   
     def column_values
-      @row.columns.map { |column|
-        @value_cache[column.name]
-      }
+      column_names.map do |name|
+        @value_cache[name]
+      end
     end
   
     def columns
