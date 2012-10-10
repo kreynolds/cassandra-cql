@@ -51,7 +51,7 @@ module CassandraCQL
   
     def column_values
       @row.columns.map { |column|
-        @value_cache[column.name]
+        @value_cache[ColumnFamily.cast(column.name, @schema.names[column.name])]
       }
     end
   
