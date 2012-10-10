@@ -184,10 +184,6 @@ describe "sanitize" do
   context "when expecting bind vars" do
     it "should raise an exception with bind variable mismatch" do
       expect {
-        Statement.sanitize("use keyspace ?")
-      }.to raise_error(Error::InvalidBindVariable)
-
-      expect {
         Statement.sanitize("use keyspace ?", ['too', 'many'])
       }.to raise_error(Error::InvalidBindVariable)
     end
