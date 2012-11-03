@@ -57,30 +57,42 @@ describe "row results" do
   it "should have two rows" do
     @result.rows.should eq(2)
   end
-  
+
+  it "should know size of rows" do
+    @result.size.should eq(2)
+  end
+
+  it "should know count of rows" do
+    @result.count.should eq(2)
+  end
+
+  it "should know length of rows" do
+    @result.length.should eq(2)
+  end
+
   context "initialize" do
     it "should have a cursor set to 0" do
       @result.instance_variable_get(:@cursor).should eq(0)
     end
-  
+
     it "should have a result" do
       @result.instance_variable_get(:@result).should be_kind_of(CassandraCQL::Thrift::CqlResult)
     end
   end
-  
+
   context "setting the cursor" do
     it "should set the cursor" do
       expect {
         @result.cursor = 15
       }.to_not raise_error
       @result.instance_variable_get(:@cursor).should eq(15)
-    end 
+    end
 
     it "should not set the cursor" do
       expect {
         @result.cursor = Object
       }.to raise_error(CassandraCQL::Error::InvalidCursor)
-    end 
+    end
   end
 
   context "fetching a single row" do
@@ -90,12 +102,12 @@ describe "row results" do
 
       @result.fetch_row.should be_kind_of(Row)
       @result.instance_variable_get(:@cursor).should eq(2)
-      
+
       @result.fetch_row.should be_nil
       @result.instance_variable_get(:@cursor).should eq(2)
     end
   end
-  
+
   context "resetting cursor should fetch the same row" do
     it "should return the same row" do
       @result.instance_variable_get(:@cursor).should eq(0)
@@ -104,7 +116,7 @@ describe "row results" do
       arr.should eq(@result.fetch_array)
     end
   end
-  
+
   context "fetch without a block" do
     it "should return a row twice then nil" do
       @result.fetch.should be_kind_of(Row)
@@ -112,12 +124,12 @@ describe "row results" do
 
       @result.fetch.should be_kind_of(Row)
       @result.instance_variable_get(:@cursor).should eq(2)
-      
+
       @result.fetch.should be_nil
       @result.instance_variable_get(:@cursor).should eq(2)
     end
   end
-  
+
   context "fetch with a block" do
     it "fetched count should equal the number of rows" do
       counter = 0
@@ -138,7 +150,7 @@ describe "row results" do
       arr.should eq(row.column_values)
     end
   end
-  
+
   context "fetch_array_with a block" do
     it "fetched count should equal the number of rows" do
       counter = 0
@@ -164,7 +176,7 @@ describe "row results" do
       @result.fetch_hash.should be_nil
     end
   end
-  
+
   context "fetch_hash_with a block" do
     it "should iterate rows() times and return hashes" do
       counter = 0
