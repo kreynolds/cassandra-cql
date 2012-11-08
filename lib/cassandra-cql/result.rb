@@ -35,7 +35,7 @@ module CassandraCQL
       }
     end
   end
-  
+
   class Result
     attr_reader :result, :schema, :cursor
 
@@ -44,11 +44,11 @@ module CassandraCQL
       @schema = ResultSchema.new(result.schema) if rows?
       @cursor = 0
     end
-  
+
     def void?
       @result.type == CassandraCQL::Thrift::CqlResultType::VOID
     end
-    
+
     def int?
       @result.type == CassandraCQL::Thrift::CqlResultType::INT
     end
@@ -61,12 +61,16 @@ module CassandraCQL
       @result.rows.size
     end
 
+    alias_method :size, :rows
+    alias_method :count, :rows
+    alias_method :length, :rows
+
     def cursor=(cursor)
       @cursor = cursor.to_i
     rescue Exception => e
       raise Error::InvalidCursor, e.to_s
     end
-    
+
     def fetch_row
       case @result.type
       when CassandraCQL::Thrift::CqlResultType::ROWS
@@ -113,7 +117,7 @@ module CassandraCQL
         end
       end
     end
-  
+
     def fetch_array
       if block_given?
         while row = fetch_row
