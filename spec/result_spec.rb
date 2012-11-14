@@ -186,4 +186,9 @@ describe "row results" do
       end
     end
   end
+
+  it "is enumerable" do
+    @result.class.ancestors.should include(Enumerable)
+    @result.map { |row| row['col1'] }.should eq(['val1', nil])
+  end
 end

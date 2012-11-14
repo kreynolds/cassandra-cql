@@ -37,6 +37,8 @@ module CassandraCQL
   end
 
   class Result
+    include Enumerable
+
     attr_reader :result, :schema, :cursor
 
     def initialize(result)
