@@ -37,6 +37,8 @@ module CassandraCQL
   end
 
   class Result
+    include Enumerable
+
     attr_reader :result, :schema, :cursor
 
     def initialize(result)
@@ -69,6 +71,10 @@ module CassandraCQL
       @cursor = cursor.to_i
     rescue Exception => e
       raise Error::InvalidCursor, e.to_s
+    end
+
+    def each
+      fetch { |row| yield row }
     end
 
     def fetch_row

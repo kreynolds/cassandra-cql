@@ -187,4 +187,20 @@ describe "row results" do
       counter.should eq(@result.rows)
     end
   end
+
+  describe "#each" do
+    it "yields each row as a hash" do
+      rows = []
+      @result.each { |row| rows << row }
+      rows.each do |row|
+        row.should be_instance_of(CassandraCQL::Row)
+        row.column_names.should eq(['col1', 'col2', 'col3', 'col4'])
+      end
+    end
+  end
+
+  it "is enumerable" do
+    @result.class.ancestors.should include(Enumerable)
+    @result.map { |row| row['col1'] }.should eq(['val1', nil])
+  end
 end
