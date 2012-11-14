@@ -130,6 +130,14 @@ describe "cast_to_cql" do
     end
   end
 
+  context "with a SimpleUUID::UUID object" do
+    it "should return the guid" do
+      uuid = SimpleUUID::UUID.new
+      guid = Statement.cast_to_cql(uuid)
+      guid.should eq(uuid.to_guid)
+    end
+  end
+
   context "with a String without quotes" do
     it "should return a copy of itself" do
       str = "This is a string"

@@ -63,6 +63,10 @@ module CassandraCQL
       @result.rows.size
     end
 
+    alias_method :size, :rows
+    alias_method :count, :rows
+    alias_method :length, :rows
+
     def cursor=(cursor)
       @cursor = cursor.to_i
     rescue Exception => e

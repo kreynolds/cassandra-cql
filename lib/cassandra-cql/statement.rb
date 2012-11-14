@@ -90,7 +90,7 @@ module CassandraCQL
         obj.strftime('%Y-%m-%d')
       elsif obj.kind_of?(Time)
         (obj.to_f * 1000).to_i
-      elsif obj.kind_of?(UUID)
+      elsif obj.kind_of?(SimpleUUID::UUID)
         obj.to_guid
       # There are corner cases where this is an invalid assumption but they are extremely rare.
       # The alternative is to make the user pack the data on their own .. let's not do that until we have to

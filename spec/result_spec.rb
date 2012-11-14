@@ -58,6 +58,18 @@ describe "row results" do
     @result.rows.should eq(2)
   end
 
+  it "should know size of rows" do
+    @result.size.should eq(2)
+  end
+
+  it "should know count of rows" do
+    @result.count.should eq(2)
+  end
+
+  it "should know length of rows" do
+    @result.length.should eq(2)
+  end
+
   context "initialize" do
     it "should have a cursor set to 0" do
       @result.instance_variable_get(:@cursor).should eq(0)
