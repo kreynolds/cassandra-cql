@@ -711,7 +711,6 @@ module CassandraCQL
       end
 
       def send_set_cql_version(version)
-        debugger
         send_message('set_cql_version', Set_cql_version_args, :version => version)
       end
 
