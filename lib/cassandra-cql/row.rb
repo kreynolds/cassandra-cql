@@ -27,7 +27,7 @@ module CassandraCQL
           column_index = key
         else
           column_name = key
-          column_index = column_names.index(key)
+          column_index = column_index(key)
         end
         
         if column_index.nil?
@@ -47,6 +47,14 @@ module CassandraCQL
       @names ||= @row.columns.map do |column|
         ColumnFamily.cast(column.name, @schema.names[column.name])
       end
+    end
+
+    def column_indices
+      @column_indices ||= Hash[column_names.each_with_index.to_a]
+    end
+
+    def column_index(column_name)
+      column_indices[column_name]
     end
   
     def column_values
