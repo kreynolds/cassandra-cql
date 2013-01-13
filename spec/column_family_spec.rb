@@ -18,8 +18,12 @@ describe "ColumnFamily class" do
     it "should have some common attributes" do
       [@standard_column_family, @super_column_family].each do |column|
         column.name.should_not be_nil
-        column.id.should_not be_nil
         column.column_type.should_not be_nil
+
+        # Only true for cassandra < 1.2
+        if CassandraCQL.CASSANDRA_VERSION < "1.2"
+          column.id.should_not be_nil
+        end
       end
     end
 
