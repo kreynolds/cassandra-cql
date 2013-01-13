@@ -4,12 +4,14 @@ if RUBY_VERSION >= "1.9"
 end
 
 require 'rubygems'
+require 'bundler'
+Bundler.setup(:default, :test)
+
 require 'yaml'
 require 'rspec'
 
 CASSANDRA_VERSION = ENV['CASSANDRA_VERSION'] || '1.1' unless defined?(CASSANDRA_VERSION)
 
-$LOAD_PATH << "#{File.expand_path(File.dirname(__FILE__))}/../lib"
 require "cassandra-cql/#{CASSANDRA_VERSION}"
 
 def yaml_fixture(file)

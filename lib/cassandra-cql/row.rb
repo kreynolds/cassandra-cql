@@ -22,12 +22,12 @@ module CassandraCQL
       @row, @schema = row, schema
       @value_cache = Hash.new { |h, key|
         # If it's a number and not one of our columns, assume it's an index
-        if key.kind_of?(Fixnum) and !column_names.include?(key)
+        if key.kind_of?(Fixnum) and !column_indices.key?(key)
           column_name = column_names[key]
           column_index = key
         else
           column_name = key
-          column_index = column_names.index(key)
+          column_index = column_indices[key]
         end
         
         if column_index.nil?
@@ -48,7 +48,11 @@ module CassandraCQL
         ColumnFamily.cast(column.name, @schema.names[column.name])
       end
     end
-  
+
+    def column_indices
+      @column_indices ||= Hash[column_names.each_with_index.to_a]
+    end
+
     def column_values
       column_names.map do |name|
         @value_cache[name]
