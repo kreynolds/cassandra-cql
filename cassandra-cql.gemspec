@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rake", ">= 0.9.2"
   s.add_development_dependency "yard", ">= 0.7.2"
   s.add_dependency "simple_uuid", ">= 0.2.0"
-  s.add_dependency "thrift_client", ">= 0.7.1"
+  s.add_dependency "thrift_client", ">= 0.7.1", "< 0.9"
 
   s.files        = `git ls-files`.split("\n")
   s.test_files   = `git ls-files -- {spec}/*`.split("\n")
