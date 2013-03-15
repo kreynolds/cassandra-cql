@@ -26,7 +26,11 @@ end
 def setup_cassandra_connection
   host = ENV['CASSANDRA_CQL_HOST'] || '127.0.0.1'
   port = ENV['CASSANDRA_CQL_PORT'] || 9160
-  connection = CassandraCQL::Database.new(["#{host}:#{port}"], {}, :retries => 5, :timeout => 5)
+
+  cassandra_cql_options = {}
+  cassandra_cql_options.merge!(:cql_version => '2.0.0') if CASSANDRA_VERSION >= '1.2'
+
+  connection = CassandraCQL::Database.new(["#{host}:#{port}"], cassandra_cql_options, :retries => 5, :timeout => 5)
   if !connection.keyspaces.map(&:name).include?("CassandraCQLTestKeyspace")
     connection.execute("CREATE KEYSPACE CassandraCQLTestKeyspace WITH strategy_class='org.apache.cassandra.locator.SimpleStrategy' AND strategy_options:replication_factor=1")
   end
