@@ -31,7 +31,7 @@ module CassandraCQL
       }
       @values = Hash.new(schema.default_value_type.split(".").last)
       schema.value_types.each_pair { |key, type|
-        @values[key] = type.split(".").last
+        @values[key] = type.gsub(/\w+?\./, '')
       }
     end
   end

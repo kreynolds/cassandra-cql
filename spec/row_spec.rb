@@ -74,25 +74,41 @@ describe "basic methods" do
 
   context 'collections', :cql_version => '3.0.0' do
     before(:each) do
-      pending 'not yet'
       @connection = setup_cassandra_connection
-      if @connection.schema.column_family_names.include?('collections')
+      if column_family_exists?(@connection, 'collections')
         @connection.execute("DROP COLUMNFAMILY collections")
       end
       @connection.execute(<<-CQL)
         CREATE COLUMNFAMILY collections (
-          key text,
-          list LIST <int>,
-          PRIMARY KEY (key)
+          key text PRIMARY KEY,
+          mylist LIST <int>,
+          myset SET <varchar>,
+          mymap MAP <uuid,timestamp>
         )
       CQL
 
-      @connection.execute("INSERT INTO collections (key, list) VALUES (?, [?])", 'test', [1, 2, 3])
+      @map = {
+        CassandraCQL::UUID.new => Time.at(Time.now.to_i),
+        CassandraCQL::UUID.new => Time.at(Time.now.to_i) - 60
+      }
+
+      @connection.execute(
+        "INSERT INTO collections (key, mylist, myset, mymap) VALUES (?, [?], {?}, {?:?,?:?})",
+        'test', [1, 2, 3], ['some', 'set'], *@map.to_a.flatten)
+
       @row = @connection.execute("SELECT * FROM collections WHERE key=?", "test").fetch
     end
 
     it 'should return list' do
-      row.to_hash['list'].should == [1, 2, 3]
+      @row.to_hash['mylist'].should == [1, 2, 3]
+    end
+
+    it 'should return set' do
+      @row.to_hash['myset'].should == Set['some', 'set']
+    end
+
+    it 'should return map' do
+      @row.to_hash['mymap'].should == @map
     end
   end
 end
