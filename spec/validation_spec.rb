@@ -14,7 +14,7 @@ describe "Validation Roundtrip tests" do
   end
 
   def reset_column_family(name, test_column_type, opts="")
-    if @connection.schema.column_family_names.include?(name)
+    if column_family_exists?(@connection, name)
       @connection.execute("DROP COLUMNFAMILY #{name}")
     end
     
@@ -22,8 +22,9 @@ describe "Validation Roundtrip tests" do
   end
   
   def change_column_type_and_raise_exception(cf_name, type, value)
+    @connection.execute("ALTER COLUMNFAMILY #{cf_name} ADD broken_column varchar")
     @connection.execute("INSERT INTO #{cf_name} (id, broken_column) values (?, ?)", 'test', value)
-    @connection.execute("ALTER COLUMNFAMILY #{cf_name} ADD broken_column #{type}")
+    @connection.execute("ALTER COLUMNFAMILY #{cf_name} ALTER broken_column TYPE #{type}")
     expect {
       @connection.execute("SELECT id, broken_column FROM #{cf_name} WHERE id=?", 'test').fetch['broken_column']
     }.to raise_error CassandraCQL::Error::CastException
@@ -100,7 +101,7 @@ describe "Validation Roundtrip tests" do
     end
   end
 
-  context "with counter validation" do
+  context "with counter validation", :cql_version => '2.0.0' do
     let(:cf_name) { "validation_cf_counter" }
     before(:each) {
       if !@connection.schema.column_family_names.include?(cf_name)

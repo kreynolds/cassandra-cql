@@ -40,8 +40,8 @@ describe "execute" do
   context "when performing void-returning column_family operations" do
     before(:each) do
       @connection = setup_cassandra_connection
-      if !@connection.schema.column_family_names.include?('colfam_ops')
-        @connection.execute("CREATE COLUMNFAMILY colfam_ops (id varchar PRIMARY KEY)")
+      if !column_family_exists?(@connection, 'colfam_ops')
+        @connection.execute("CREATE COLUMNFAMILY colfam_ops (id varchar PRIMARY KEY, column varchar)")
       else
         @connection.execute("TRUNCATE colfam_ops")
       end

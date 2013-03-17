@@ -14,7 +14,7 @@ describe "Validation Roundtrip tests" do
   end
 
   def create_column_family(name, test_row_key_type)
-    if !@connection.schema.column_family_names.include?(name)
+    if !column_family_exists?(@connection, name)
       @connection.execute("CREATE COLUMNFAMILY #{name} (id #{test_row_key_type} PRIMARY KEY, test_column text)")
     end
   end

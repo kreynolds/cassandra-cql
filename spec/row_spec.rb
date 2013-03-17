@@ -6,9 +6,7 @@ describe "basic methods" do
   context 'with basic column family' do
     before(:each) do
       @connection = setup_cassandra_connection
-      if @connection.schema.column_family_names.include?('basic_methods')
-        @connection.execute("DROP COLUMNFAMILY basic_methods")
-      end
+      drop_column_family_if_exists(@connection, 'basic_methods')
       @connection.execute("CREATE COLUMNFAMILY basic_methods (id varchar PRIMARY KEY, created_at uuid, default_column varchar, name varchar, serial int)")
 
       @connection.execute("INSERT INTO basic_methods (id, created_at, name, serial, default_column) VALUES (?, ?, ?, ?, ?)", 'test', Time.new, 'name', 12345, 'snork')
@@ -48,7 +46,7 @@ describe "basic methods" do
     end
   end
 
-  context 'with a column family with int comparators' do
+  context 'with a column family with int comparators', :cql_version => '2.0.0' do
     before(:each) do
       @connection = setup_cassandra_connection
       if @connection.schema.column_family_names.include?('int_comparator')
@@ -71,6 +69,30 @@ describe "basic methods" do
         @row.column_values.should be_kind_of(Array)
         @row.column_values.should =~ ['test', 'value1', 'value2']
       end
+    end
+  end
+
+  context 'collections', :cql_version => '3.0.0' do
+    before(:each) do
+      pending 'not yet'
+      @connection = setup_cassandra_connection
+      if @connection.schema.column_family_names.include?('collections')
+        @connection.execute("DROP COLUMNFAMILY collections")
+      end
+      @connection.execute(<<-CQL)
+        CREATE COLUMNFAMILY collections (
+          key text,
+          list LIST <int>,
+          PRIMARY KEY (key)
+        )
+      CQL
+
+      @connection.execute("INSERT INTO collections (key, list) VALUES (?, [?])", 'test', [1, 2, 3])
+      @row = @connection.execute("SELECT * FROM collections WHERE key=?", "test").fetch
+    end
+
+    it 'should return list' do
+      row.to_hash['list'].should == [1, 2, 3]
     end
   end
 end

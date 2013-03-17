@@ -11,10 +11,12 @@ describe "void results" do
   end
 end
 
-describe "sparse row results" do
+# CQL3 does not directly model wide rows as sparse rows, so this test is only
+# needed for CQL2
+describe "sparse row results", :cql_version => '2.0.0' do
   before(:each) do
     @connection = setup_cassandra_connection
-    if !@connection.schema.column_family_names.include?('sparse_results')
+    if !column_family_exists?(@connection, 'sparse_results')
       @connection.execute("CREATE COLUMNFAMILY sparse_results (id varchar PRIMARY KEY)")
     else
       @connection.execute("TRUNCATE sparse_results")
@@ -43,6 +45,18 @@ end
 describe "row results" do
   before(:each) do
     @connection = setup_cassandra_connection
+    drop_column_family_if_exists(@connection, 'sparse_results')
+    @connection.execute(<<-CQL)
+      CREATE TABLE sparse_results (
+        id varchar PRIMARY KEY,
+        col1 varchar,
+        col2 varchar,
+        col3 varchar,
+        col4 varchar,
+        col5 varchar,
+        col6 varchar
+      )
+    CQL
     @connection.execute("INSERT INTO sparse_results (id, col1, col2, col3) VALUES (?, ?, ?, ?)", 'key1', 'val1', 'val2', 'val3').should be_nil
     @connection.execute("INSERT INTO sparse_results (id, col4, col5, col6) VALUES (?, ?, ?, ?)", 'key2', 'val4', 'val5', 'val6').should be_nil
     @result = @connection.execute("SELECT col1, col2, col3, col4 FROM sparse_results")

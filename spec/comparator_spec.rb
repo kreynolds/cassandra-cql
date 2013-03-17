@@ -2,7 +2,7 @@
 require File.expand_path('spec_helper.rb', File.dirname(__FILE__))
 include CassandraCQL
 
-describe "Comparator Roundtrip tests" do
+describe "Comparator Roundtrip tests", :cql_version => '2.0.0' do
   before(:each) do
     @connection = setup_cassandra_connection
   end
