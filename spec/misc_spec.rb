@@ -4,7 +4,7 @@ include CassandraCQL
 describe "Miscellaneous tests that handle specific failures/regressions" do
   before(:each) do
     @connection = setup_cassandra_connection
-    @connection.execute("DROP COLUMNFAMILY misc_tests") if @connection.schema.column_family_names.include?('misc_tests')
+    drop_column_family_if_exists(@connection, 'misc_tests')
     @connection.execute("CREATE COLUMNFAMILY misc_tests (id text PRIMARY KEY)")
   end
 
@@ -12,7 +12,7 @@ describe "Miscellaneous tests that handle specific failures/regressions" do
     before(:each) do
       @connection.execute("ALTER COLUMNFAMILY misc_tests ADD test_column ascii")
     end
-    
+
     it "should be consistent with ascii-encoded text" do
       @connection.execute("INSERT INTO misc_tests (id, test_column) VALUES (?, ?)", 'test', 'test_column').should be_nil
       row = @connection.execute("SELECT test_column FROM misc_tests WHERE id=?", 'test').fetch
@@ -25,11 +25,13 @@ describe "Miscellaneous tests that handle specific failures/regressions" do
 
   context "with unvalidatable data" do
     before(:each) do
+      @connection.execute("ALTER COLUMNFAMILY misc_tests ADD good_column varchar")
+      @connection.execute("ALTER COLUMNFAMILY misc_tests ADD bad_column varchar")
       @connection.execute("INSERT INTO misc_tests (id, good_column, bad_column) VALUES (?, ?, ?)", 'test', 'blah', '')
-      @connection.execute("ALTER COLUMNFAMILY misc_tests ADD bad_column int")
+      @connection.execute("ALTER COLUMNFAMILY misc_tests ALTER bad_column TYPE int")
       @row = @connection.execute("SELECT good_column, bad_column FROM misc_tests WHERE id=?", 'test').fetch
     end
-    
+
     it "should have valid column_names" do
       @row.column_names.should eq ['good_column', 'bad_column']
     end

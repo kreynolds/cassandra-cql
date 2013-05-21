@@ -78,7 +78,24 @@ module CassandraCQL
     def self.cast(value, type)
       return nil if value.nil?
 
-      if CassandraCQL::Types.const_defined?(type)
+      if type =~ /^(List|Set|Map)Type\((.+)\)$/
+        collection_type, value_type = $1, $2
+        case collection_type
+        when 'List'
+          CassandraCQL::Collections::List.cast(value) do |element|
+            cast(element, value_type)
+          end
+        when 'Set'
+          CassandraCQL::Collections::Set.cast(value) do |element|
+            cast(element, value_type)
+          end
+        when 'Map'
+          key_type, map_value_type = value_type.split(',')
+          CassandraCQL::Collections::Map.cast(value) do |key, element|
+            [cast(key, key_type), cast(element, map_value_type)]
+          end
+        end
+      elsif CassandraCQL::Types.const_defined?(type)
         CassandraCQL::Types.const_get(type).cast(value)
       else
         CassandraCQL::Types::AbstractType.cast(value)
