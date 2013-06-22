@@ -76,6 +76,10 @@ module CassandraCQL
         "'" + obj + "'"
       elsif obj.kind_of?(Numeric)
         obj
+      elsif obj.kind_of?(SimpleUUID::UUID)
+        obj.to_guid
+      elsif obj.kind_of?(TrueClass) or obj.kind_of?(FalseClass)
+        obj.to_s
       else
         raise Error::UnescapableObject, "Unable to escape object of class #{obj.class}"
       end
@@ -84,14 +88,16 @@ module CassandraCQL
     def self.cast_to_cql(obj)
       if obj.kind_of?(Array)
         obj.map { |member| cast_to_cql(member) }
-      elsif obj.kind_of?(Fixnum) or obj.kind_of?(Float)
+      elsif obj.kind_of?(Numeric) #obj.kind_of?(Fixnum) or obj.kind_of?(Float) or obj.kind_of?(Bignum)
         obj
       elsif obj.kind_of?(Date)
         obj.strftime('%Y-%m-%d')
       elsif obj.kind_of?(Time)
         (obj.to_f * 1000).to_i
       elsif obj.kind_of?(SimpleUUID::UUID)
-        obj.to_guid
+        obj
+      elsif obj.kind_of?(TrueClass) or obj.kind_of?(FalseClass)
+        obj
       # There are corner cases where this is an invalid assumption but they are extremely rare.
       # The alternative is to make the user pack the data on their own .. let's not do that until we have to
       elsif obj.kind_of?(String) and Utility.binary_data?(obj)

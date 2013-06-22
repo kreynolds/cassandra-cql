@@ -126,7 +126,7 @@ describe "cast_to_cql" do
     it "should return the a guid" do
       uuid = UUID.new
       guid = Statement.cast_to_cql(uuid)
-      guid.should eq(uuid.to_guid)
+      guid.should eq(uuid)
     end
   end
 
@@ -134,7 +134,7 @@ describe "cast_to_cql" do
     it "should return the guid" do
       uuid = SimpleUUID::UUID.new
       guid = Statement.cast_to_cql(uuid)
-      guid.should eq(uuid.to_guid)
+      guid.should eq(uuid)
     end
   end
 
