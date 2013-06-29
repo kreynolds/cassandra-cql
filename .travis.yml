@@ -6,7 +6,6 @@ env:
   - CASSANDRA_VERSION=1.2 CQL_VERSION=2.0.0
   - CASSANDRA_VERSION=1.1 CQL_VERSION=2.0.0
   - CASSANDRA_VERSION=1.0 CQL_VERSION=2.0.0
-  - CASSANDRA_VERSION=0.8 CQL_VERSION=2.0.0
 before_script:
   - java -version
   - bundle exec rake 'cassandra:start[daemonize]'
