@@ -70,29 +70,53 @@ describe "escape" do
 end
 
 describe "quote" do
+  
   context "with a string" do
     it "should add quotes" do
-      Statement.quote("test").should eq("'test'")
+      Statement.quote("test", USE_CQL3).should eq("'test'")
     end
   end
 
   context "with an integer" do
     it "should not add quotes" do
-      Statement.quote(15).should eq(15)
+      Statement.quote(15, USE_CQL3).should eq("15")
     end
   end
 
   context "with an array" do
     it "should return a comma-separated list" do
-      Statement.quote([1, 2, 3]).should eq("1,2,3")
-      Statement.quote(["a", "b''", "c"]).should eq("'a','b''','c'")
+      Statement.quote([1, 2, 3], USE_CQL3).should eq("1,2,3")
+      Statement.quote(["a", "b''", "c"], USE_CQL3).should eq("'a','b''','c'")
+    end
+  end
+
+  context "with a big decimal" do
+    let :big_decimal do
+      BigDecimal.new('129182739481237481341234123411.1029348102934810293481039') 
+    end
+    let :result do 
+      '0.1291827394812374813412341234111029348102934810293481039E30'
+    end
+    
+    it "should add quotes", cql_version: '2.0.0' do
+      Statement.quote(BigDecimal.new(big_decimal), USE_CQL3).should eq("'#{result}'")
+    end
+
+    it "should not add quotes", cql_version: '3.0.0' do
+      Statement.quote(big_decimal, USE_CQL3).should eq(result)
+    end  
+  end
+  context "with a boolean" do
+    it "should not add quotes" do
+      Statement.quote(true, USE_CQL3).should eq("true")
+      Statement.quote(false, USE_CQL3).should eq("false")
     end
   end
 
   context "with an unsupported object" do
     it "should raise an exception" do
       expect {
-        Statement.quote(Time.new)
+        Statement.quote(Time.new, USE_CQL3)
       }.to raise_error(CassandraCQL::Error::UnescapableObject)
     end
   end
@@ -183,40 +207,41 @@ describe "cast_to_cql" do
 end
 
 describe "sanitize" do
+
   context "with no bind vars" do
     it "should return itself" do
-      Statement.sanitize("use keyspace").should eq("use keyspace")
+      Statement.sanitize("use keyspace", [], USE_CQL3).should eq("use keyspace")
     end
   end
   
   context "when expecting bind vars" do
     it "should raise an exception with bind variable mismatch" do
       expect {
-        Statement.sanitize("use keyspace ?", ['too', 'many'])
+        Statement.sanitize("use keyspace ?", ['too', 'many'], USE_CQL3)
       }.to raise_error(Error::InvalidBindVariable)
     end
 
     it "should not raise an exception with matching bind vars" do
       expect {
-        Statement.sanitize("use keyspace ?", ["test"]).should eq("use keyspace 'test'")
+        Statement.sanitize("use keyspace ?", ["test"], USE_CQL3).should eq("use keyspace 'test'")
       }.to_not raise_error(Error::InvalidBindVariable)
     end
 
     it "should have bind vars in the right order" do
       expect {
-        Statement.sanitize("use keyspace ? with randomness (?)", ["test", "stuff"]).should eq("use keyspace 'test' with randomness ('stuff')")
+        Statement.sanitize("use keyspace ? with randomness (?)", ["test", "stuff"], USE_CQL3).should eq("use keyspace 'test' with randomness ('stuff')")
       }.to_not raise_error(Error::InvalidBindVariable)
     end
 
     it "should not double-escape the single quotes in your string" do
       Statement.sanitize(
-        "insert into keyspace (key, ?) values (?)", ["vanilla", %Q{I\'m a string with \'cool\' quotes}]
+        "insert into keyspace (key, ?) values (?)", ["vanilla", %Q{I\'m a string with \'cool\' quotes}], USE_CQL3
       ).should eq("insert into keyspace (key, 'vanilla') values ('I''m a string with ''cool'' quotes')")
     end
 
     it "should handle numbers and stuff appropriately" do
       Statement.sanitize(
-        "insert into keyspace (key, ?) values (?)", [488, 60.368]
+        "insert into keyspace (key, ?) values (?)", [488, 60.368], USE_CQL3
       ).should eq("insert into keyspace (key, 488) values (60.368)")
     end
 

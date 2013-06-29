@@ -12,6 +12,7 @@ require 'rspec'
 
 CASSANDRA_VERSION = ENV['CASSANDRA_VERSION'] || '1.1' unless defined?(CASSANDRA_VERSION)
 CQL_VERSION = ENV['CQL_VERSION'] || '2.0.0'
+USE_CQL3 = CQL_VERSION.split('.').first.to_i == 3
 
 require "cassandra-cql/#{CASSANDRA_VERSION}"
 
