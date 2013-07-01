@@ -34,12 +34,14 @@ module CassandraCQL
 
       @keyspace = @options[:keyspace]
       @cql_version = @options[:cql_version]
-      @use_cql3_query =
-        (@cql_version.nil? || @cql_version.split('.').first.to_i >= 3) &&
-        CassandraCQL::Thrift::Client.method_defined?(:execute_cql3_query)
       @servers = servers
       connect!
       execute("USE #{@keyspace}")
+    end
+
+    def use_cql3?
+      (@cql_version.nil? || @cql_version.split('.').first.to_i >= 3) &&
+        CassandraCQL::Thrift::Client.method_defined?(:execute_cql3_query)
     end
 
     def connect!
@@ -99,7 +101,7 @@ module CassandraCQL
     end
 
     def execute_cql_query(cql, compression=CassandraCQL::Thrift::Compression::NONE)
-      if @use_cql3_query
+      if use_cql3?
         @connection.execute_cql3_query(cql, compression, CassandraCQL::Thrift::ConsistencyLevel::QUORUM) #TODO consistency level
       else
         @connection.execute_cql_query(cql, compression)

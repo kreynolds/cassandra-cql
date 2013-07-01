@@ -9,7 +9,7 @@ describe "basic methods" do
       drop_column_family_if_exists(@connection, 'basic_methods')
       @connection.execute("CREATE COLUMNFAMILY basic_methods (id varchar PRIMARY KEY, created_at uuid, default_column varchar, name varchar, serial int)")
 
-      @connection.execute("INSERT INTO basic_methods (id, created_at, name, serial, default_column) VALUES (?, ?, ?, ?, ?)", 'test', Time.new, 'name', 12345, 'snork')
+      @connection.execute("INSERT INTO basic_methods (id, created_at, name, serial, default_column) VALUES (?, ?, ?, ?, ?)", 'test', CassandraCQL::UUID.new, 'name', 12345, 'snork')
       @row = @connection.execute("SELECT * FROM basic_methods WHERE id=?", "test").fetch
     end
 
