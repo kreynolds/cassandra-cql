@@ -72,6 +72,10 @@ So adding a feature like counters just requires teaching the CQL parser to under
 
 # Notes
 
+## Supported versions of ruby
+
+As of version 1.2.0, cassandra-cql only supports ruby >= 1.9.
+
 ## Changing Validation on Columns with existing/unvalidatable data
 
   If you have existing data and change the validation on a column in an incompatible
