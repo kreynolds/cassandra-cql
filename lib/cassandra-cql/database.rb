@@ -46,11 +46,16 @@ module CassandraCQL
 
     def connect!
       @connection = ThriftClient.new(CassandraCQL::Thrift::Client, @servers, @thrift_client_options)
+
+      if @options[:username] and @options[:password]
+        login!(@options[:username], @options[:password])
+      end
+
       obj = self
       @connection.add_callback(:post_connect) do
         @connection.set_cql_version(@cql_version) if @cql_version
-        execute("USE #{@keyspace}")
         @connection.login(@auth_request) if @auth_request
+        execute("USE #{@keyspace}")
       end
     end
 
