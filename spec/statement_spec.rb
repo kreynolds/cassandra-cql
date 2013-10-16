@@ -107,9 +107,16 @@ describe "quote" do
     end  
   end
   context "with a boolean" do
-    it "should not add quotes" do
-      Statement.quote(true, USE_CQL3).should eq("true")
-      Statement.quote(false, USE_CQL3).should eq("false")
+    if USE_CQL3
+      it "should not add quotes" do
+        Statement.quote(true, USE_CQL3).should eq("true")
+        Statement.quote(false, USE_CQL3).should eq("false")
+      end
+    else
+      it "should add quotes" do
+        Statement.quote(true, USE_CQL3).should eq("'true'")
+        Statement.quote(false, USE_CQL3).should eq("'false'")
+      end
     end
   end
 
