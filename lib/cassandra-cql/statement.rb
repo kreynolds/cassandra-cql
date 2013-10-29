@@ -74,17 +74,16 @@ module CassandraCQL
         obj.map { |member| quote(member, use_cql3) }.join(",")
       elsif obj.kind_of?(String)
         "'" + obj + "'"
-      elsif obj.kind_of?(BigDecimal) and (!use_cql3 or CASSANDRA_VERSION.to_f < 1.2)
+      elsif obj.kind_of?(BigDecimal) and !use_cql3
         "'" + obj.to_s + "'"
       elsif obj.kind_of?(Numeric)
         obj.to_s
       elsif obj.kind_of?(SimpleUUID::UUID)
         obj.to_guid
-      #elsif obj.kind_of?(TrueClass) or obj.kind_of?(FalseClass) and use_cql3 and CASSANDRA_VERSION.to_f == 1.2
-      #  obj.to_s
-      elsif obj.kind_of?(TrueClass) or obj.kind_of?(FalseClass)
-        #"'" + obj.to_s + "'"
+      elsif obj.kind_of?(TrueClass) or obj.kind_of?(FalseClass) and use_cql3
         obj.to_s
+      elsif obj.kind_of?(TrueClass) or obj.kind_of?(FalseClass)
+        "'" + obj.to_s + "'"
       else
         raise Error::UnescapableObject, "Unable to escape object of class #{obj.class}"
       end

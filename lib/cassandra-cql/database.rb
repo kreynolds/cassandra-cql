@@ -36,12 +36,10 @@ module CassandraCQL
       @cql_version = @options[:cql_version]
       @servers = servers
       connect!
-      execute("USE #{@keyspace}")
     end
 
     def use_cql3?
-      (@cql_version.nil? || @cql_version.split('.').first.to_i >= 3) &&
-        CassandraCQL::Thrift::Client.method_defined?(:execute_cql3_query)
+      @use_cql3
     end
 
     def connect!
@@ -53,10 +51,18 @@ module CassandraCQL
 
       obj = self
       @connection.add_callback(:post_connect) do
-        @connection.set_cql_version(@cql_version) if @cql_version
+        if @connection.describe_version >= '19.35.0' && (!@cql_version || @cql_version >= '3.0.0')
+          @use_cql3 = true
+        elsif @cql_version
+          @use_cql3 = false
+          @connection.set_cql_version(@cql_version)
+        else
+          @use_cql3 = false
+        end
         @connection.login(@auth_request) if @auth_request
         execute("USE #{@keyspace}")
       end
+      @connection.connect!
     end
 
     def disconnect!
