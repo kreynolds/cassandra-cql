@@ -10,8 +10,8 @@ Bundler.setup(:default, :test)
 require 'yaml'
 require 'rspec'
 
-CASSANDRA_VERSION = ENV['CASSANDRA_VERSION'] || '1.1' unless defined?(CASSANDRA_VERSION)
-CQL_VERSION = ENV['CQL_VERSION'] || '2.0.0'
+CASSANDRA_VERSION = ENV['CASSANDRA_VERSION'] || '1.2' unless defined?(CASSANDRA_VERSION)
+CQL_VERSION = ENV['CQL_VERSION'] || '3.0.0'
 USE_CQL3 = CQL_VERSION.split('.').first.to_i == 3 && CASSANDRA_VERSION >= '1.2'
 
 require "cassandra-cql/#{CASSANDRA_VERSION}"
