@@ -72,6 +72,8 @@ module CassandraCQL
     def self.quote(obj, use_cql3=false)
       if obj.kind_of?(Array)
         obj.map { |member| quote(member, use_cql3) }.join(",")
+      elsif obj.kind_of?(String) and obj.match /^\{.*\}$/
+        obj
       elsif obj.kind_of?(String)
         "'" + obj + "'"
       elsif obj.kind_of?(BigDecimal) and !use_cql3
@@ -89,9 +91,11 @@ module CassandraCQL
       end
     end
 
-    def self.cast_to_cql(obj)
+    def self.cast_to_cql(obj, use_cql3=false)
       if obj.kind_of?(Array)
         obj.map { |member| cast_to_cql(member) }
+      elsif obj.kind_of?(Hash)
+        "{"+obj.map{ |key,val| "#{quote(cast_to_cql(key), use_cql3)}:#{quote(cast_to_cql(val), use_cql3)}" }.join(',')+"}"
       elsif obj.kind_of?(Numeric)
         obj
       elsif obj.kind_of?(Date)
@@ -110,7 +114,7 @@ module CassandraCQL
         RUBY_VERSION >= "1.9" ? escape(obj.to_s.dup.force_encoding('ASCII-8BIT')) : escape(obj.to_s.dup)
       end
     end
-  
+
     def self.sanitize(statement, bind_vars=[], use_cql3=false)
       # If there are no bind variables, return the statement unaltered
       return statement if bind_vars.empty?
@@ -119,9 +123,9 @@ module CassandraCQL
       expected_bind_vars = statement.count("?")
 
       raise Error::InvalidBindVariable, "Wrong number of bound variables (statement expected #{expected_bind_vars}, was #{bind_vars.size})" if expected_bind_vars != bind_vars.size
-    
+
       statement.gsub(/\?/) {
-        quote(cast_to_cql(bind_vars.shift), use_cql3)
+        quote(cast_to_cql(bind_vars.shift, use_cql3), use_cql3)
       }
     end
   end
