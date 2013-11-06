@@ -30,13 +30,13 @@ describe "execute" do
       stmt.execute([], :compression => true).should be_nil
       @connection.keyspace.should eq('system')
     end
-    
+
     it "should set keyspace to nil when deleting keyspace" do
       @connection.execute("DROP KEYSPACE #{@connection.keyspace}").should be_nil
       @connection.keyspace.should be_nil
     end
   end
-  
+
   context "when performing void-returning column_family operations" do
     before(:each) do
       @connection = setup_cassandra_connection
@@ -70,10 +70,18 @@ describe "escape" do
 end
 
 describe "quote" do
-  
+
   context "with a string" do
     it "should add quotes" do
       Statement.quote("test", USE_CQL3).should eq("'test'")
+    end
+  end
+
+  context "with a JSON string" do
+    #regression test, conflict with Map collection
+    it "should add quotes" do
+      json = '{"foo":"test", "bar":1}'
+      Statement.quote(json, USE_CQL3).should eq("'#{json}'")
     end
   end
 
@@ -92,19 +100,19 @@ describe "quote" do
 
   context "with a big decimal" do
     let :big_decimal do
-      BigDecimal.new('129182739481237481341234123411.1029348102934810293481039') 
+      BigDecimal.new('129182739481237481341234123411.1029348102934810293481039')
     end
-    let :result do 
+    let :result do
       '0.1291827394812374813412341234111029348102934810293481039E30'
     end
-    
+
     it "should add quotes", cql_version: '2.0.0' do
       Statement.quote(BigDecimal.new(big_decimal), USE_CQL3).should eq("'#{result}'")
     end
 
     it "should not add quotes", cql_version: '3.0.0' do
       Statement.quote(big_decimal, USE_CQL3).should eq(result)
-    end  
+    end
   end
   context "with a boolean" do
     if USE_CQL3
@@ -138,7 +146,7 @@ describe "cast_to_cql" do
       Time.at(long / 1000.0).to_f.should be_within(0.001).of(ts.to_f)
     end
   end
-  
+
   context "with a Date object" do
     it "should return a corresponding Time object" do
       date = Date.today << 1
@@ -146,15 +154,15 @@ describe "cast_to_cql" do
       str.should eq(date.strftime('%Y-%m-%d'))
     end
   end
-  
+
   context "with a Fixnum object" do
     it "should return the same object" do
       Statement.cast_to_cql(15).should eq(15)
     end
   end
-  
+
   context "with a UUID object" do
-    it "should return the a guid" do
+    it "should return the same object" do
       uuid = UUID.new
       guid = Statement.cast_to_cql(uuid)
       guid.should eq(uuid)
@@ -162,7 +170,7 @@ describe "cast_to_cql" do
   end
 
   context "with a SimpleUUID::UUID object" do
-    it "should return the guid" do
+    it "should return the same object" do
       uuid = SimpleUUID::UUID.new
       guid = Statement.cast_to_cql(uuid)
       guid.should eq(uuid)
@@ -177,7 +185,7 @@ describe "cast_to_cql" do
       new_str.object_id.should_not eq(str.object_id)
     end
   end
-  
+
   context "with a String with quotes" do
     it "should return a quoted version" do
       str = "This is a ' string"
@@ -186,7 +194,7 @@ describe "cast_to_cql" do
       new_str.should eq(Statement.escape(str))
     end
   end
-  
+
   context "with binary data" do
     it "should return an unpacked version" do
       bytes = "binary\x00"
@@ -196,14 +204,14 @@ describe "cast_to_cql" do
       [new_data].pack('H*').should eq(bytes)
     end
   end
-  
+
   context "with an array of Fixnums" do
     it "should equal itself" do
       arr = [1, 2, 3]
       Statement.cast_to_cql(arr).should eq(arr)
     end
   end
-  
+
   context "with an array of Strings" do
     it "should return quoted versions of itself" do
       arr = ["test", "'"]
@@ -220,7 +228,7 @@ describe "sanitize" do
       Statement.sanitize("use keyspace", [], USE_CQL3).should eq("use keyspace")
     end
   end
-  
+
   context "when expecting bind vars" do
     it "should raise an exception with bind variable mismatch" do
       expect {
