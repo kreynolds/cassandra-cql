@@ -25,14 +25,14 @@ describe "basic methods" do
         @row.column_values.size.should eq(@row.column_names.size)
       end
     end
-      
+
     context "columns" do
       it "should equal the number of columns" do
         @row.column_names.size.should eq(@row.column_values.size)
         @row.columns.should eq(@row.column_names.size)
       end
     end
-    
+
     context "checking casting" do
       it "should return column_values for to_a" do
         @row.to_a.should eq(@row.column_values)
@@ -83,7 +83,8 @@ describe "basic methods" do
           key text PRIMARY KEY,
           mylist LIST <int>,
           myset SET <varchar>,
-          mymap MAP <uuid,timestamp>
+          mymap MAP <uuid,timestamp>,
+          myflattenmap MAP <uuid,timestamp>
         )
       CQL
 
@@ -93,8 +94,8 @@ describe "basic methods" do
       }
 
       @connection.execute(
-        "INSERT INTO collections (key, mylist, myset, mymap) VALUES (?, [?], {?}, {?:?,?:?})",
-        'test', [1, 2, 3], ['some', 'set'], *@map.to_a.flatten)
+        "INSERT INTO collections (key, mylist, myset, mymap, myflattenmap) VALUES (?, [?], {?}, ?, {?:?,?:?})",
+        'test', [1, 2, 3], ['some', 'set'], @map, *@map.to_a.flatten)
 
       @row = @connection.execute("SELECT * FROM collections WHERE key=?", "test").fetch
     end

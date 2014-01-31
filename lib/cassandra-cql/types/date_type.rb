@@ -23,5 +23,7 @@ module CassandraCQL
         raise Error::CastException.new("Unable to convert bytes to Date", value)
       end
     end
+
+    TimestampType = DateType
   end
 end
