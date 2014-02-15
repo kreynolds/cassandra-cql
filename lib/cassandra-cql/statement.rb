@@ -36,7 +36,7 @@ module CassandraCQL
       @statement = statement
     end
 
-    def execute(bind_vars=[], options={})
+    def execute(bind_vars=[], consistency, options={})
       sanitized_query = self.class.sanitize(@statement, bind_vars, @handle.use_cql3?)
       compression_type = CassandraCQL::Thrift::Compression::NONE
       if options[:compression]

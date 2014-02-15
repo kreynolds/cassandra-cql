@@ -100,12 +100,12 @@ module CassandraCQL
       end
     end
 
-    def execute(statement, consistency, *bind_vars)
-        # consistency can be either of the following options:
+    def execute(statement, consistency=CassandraCQL::Thrift::ConsistencyLevel::QUORUM, *bind_vars)
+        # consistency can include either of the following options:
         #  - CassandraCQL::Thrift::ConsistencyLevel::QUORUM
         #  - CassandraCQL::Thrift::ConsistencyLevel::LOCAL_QUORUM
         #  - CassandraCQL::Thrift::ConsistencyLevel::ONE
-      result = statement_class.new(self, statement, consistency).execute(bind_vars)
+      result = statement_class.new(self, statement).execute(bind_vars, consistency)
       if block_given?
         yield result
       else
@@ -115,7 +115,7 @@ module CassandraCQL
       raise Error::InvalidRequestException.new($!.why)
     end
 
-    def execute_cql_query(cql, compression=CassandraCQL::Thrift::Compression::NONE, consistency=CassandraCQL::Thrift::ConsistencyLevel::QUORUM)
+    def execute_cql_query(cql, compression=CassandraCQL::Thrift::Compression::NONE, consistency)
       if use_cql3?
         @connection.execute_cql3_query(cql, compression, consistency) 
       else
