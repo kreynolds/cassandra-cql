@@ -66,6 +66,12 @@ module CassandraCQL
     def to_a
       column_values
     end
+
+    def first
+      if columns > 0
+        column_values[0]
+      end
+    end
   
     # TODO: This should be an ordered hash
     def to_hash

@@ -124,6 +124,16 @@ module CassandraCQL
       end
     end
 
+    def fetch_first
+      if block_given?
+        while row = fetch_row
+          yield row.first
+        end
+      elsif row = fetch_row
+        row.first
+      end
+    end
+
     def fetch_array
       if block_given?
         while row = fetch_row
