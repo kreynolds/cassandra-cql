@@ -36,12 +36,17 @@ module CassandraCQL
       @statement = statement
     end
 
-    def execute(bind_vars=[], consistency, options={})
+    def execute(bind_vars=[], options={})
       sanitized_query = self.class.sanitize(@statement, bind_vars, @handle.use_cql3?)
       compression_type = CassandraCQL::Thrift::Compression::NONE
       if options[:compression]
         compression_type = CassandraCQL::Thrift::Compression::GZIP
         sanitized_query = Utility.compress(sanitized_query)
+      end
+
+      consistency = CassandraCQL::Thrift::ConsistencyLevel::QUORUM
+      if options[:consistency]
+        consistency = options[:consistency]
       end
 
       res = Result.new(@handle.execute_cql_query(sanitized_query, compression_type, consistency))
