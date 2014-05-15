@@ -101,7 +101,7 @@ module CassandraCQL
     end
 
     def execute_with_consistency(statement, consistency=CassandraCQL::Thrift::ConsistencyLevel::QUORUM, *bind_vars)
-        # consistency can include either of the following options:
+        # consistency can be any of the following options:
         #  - CassandraCQL::Thrift::ConsistencyLevel::QUORUM
         #  - CassandraCQL::Thrift::ConsistencyLevel::LOCAL_QUORUM
         #  - CassandraCQL::Thrift::ConsistencyLevel::ONE
@@ -128,7 +128,7 @@ module CassandraCQL
 
     def execute_cql_query(cql, compression=CassandraCQL::Thrift::Compression::NONE, consistency=CassandraCQL::Thrift::ConsistencyLevel::QUORUM)
       if use_cql3?
-        @connection.execute_cql3_query(cql, compression, consistency) 
+        @connection.execute_cql3_query(cql, compression, consistency)
       else
         @connection.execute_cql_query(cql, compression)
       end
