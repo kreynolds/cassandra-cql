@@ -44,7 +44,12 @@ module CassandraCQL
         sanitized_query = Utility.compress(sanitized_query)
       end
 
-      res = Result.new(@handle.execute_cql_query(sanitized_query, compression_type))
+      consistency = CassandraCQL::Thrift::ConsistencyLevel::QUORUM
+      if options[:consistency]
+        consistency = options[:consistency]
+      end
+
+      res = Result.new(@handle.execute_cql_query(sanitized_query, compression_type, consistency))
 
       # Change our keyspace if required
       if @statement =~ KS_CHANGE_RE

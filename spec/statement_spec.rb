@@ -51,6 +51,10 @@ describe "execute" do
       @connection.execute("INSERT INTO colfam_ops (id, column) VALUES (?, ?)", "key", "value").should be_nil
     end
 
+    it "should return nil when inserting with consistency level" do
+      @connection.execute_with_consistency("INSERT INTO colfam_ops (id, column) VALUES (?, ?)", CassandraCQL::Thrift::ConsistencyLevel::ONE, "key", "value").should be_nil
+    end
+
     it "should return nil when updating" do
       @connection.execute("UPDATE colfam_ops SET column=? WHERE id=?", "value", "key").should be_nil
     end
