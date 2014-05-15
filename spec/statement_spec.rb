@@ -52,7 +52,7 @@ describe "execute" do
     end
 
     it "should return nil when inserting with consistency level" do
-      @connection.execute_with_consistency("INSERT INTO colfam_ops (id, column) VALUES (?, ?)", "key", "value", CassandraCQL::Thrift::ConsistencyLevel::ONE).should be_nil
+      @connection.execute_with_consistency("INSERT INTO colfam_ops (id, column) VALUES (?, ?)", CassandraCQL::Thrift::ConsistencyLevel::ONE, "key", "value").should be_nil
     end
 
     it "should return nil when updating" do
