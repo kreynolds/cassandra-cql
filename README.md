@@ -34,7 +34,7 @@ So adding a feature like counters just requires teaching the CQL parser to under
     # Creating a column family with a single validated column
     db.execute("CREATE COLUMNFAMILY users (id varchar PRIMARY KEY, email varchar)")
 
-    # Create an index on the name
+    # Create an index on the email
     db.execute("CREATE INDEX users_email_idx ON users (email)")
 
 ## Inserting into a Column Family
