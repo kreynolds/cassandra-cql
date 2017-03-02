@@ -107,7 +107,7 @@ module CassandraCQL
     def fetch_hash
       if block_given?
         while row = fetch_row
-          if row.kind_of?(Fixnum)
+          if row.kind_of?(Integer)
             yield({row => row})
           else
             yield row.to_hash
@@ -115,7 +115,7 @@ module CassandraCQL
         end
       else
         if row = fetch_row
-          if row.kind_of?(Fixnum)
+          if row.kind_of?(Integer)
             {row => row}
           else
             row.to_hash

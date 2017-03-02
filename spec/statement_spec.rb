@@ -159,7 +159,7 @@ describe "cast_to_cql" do
     end
   end
 
-  context "with a Fixnum object" do
+  context "with a Integer object" do
     it "should return the same object" do
       Statement.cast_to_cql(15).should eq(15)
     end
@@ -209,7 +209,7 @@ describe "cast_to_cql" do
     end
   end
 
-  context "with an array of Fixnums" do
+  context "with an array of Integers" do
     it "should equal itself" do
       arr = [1, 2, 3]
       Statement.cast_to_cql(arr).should eq(arr)

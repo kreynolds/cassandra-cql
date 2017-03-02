@@ -22,7 +22,7 @@ module CassandraCQL
       @row, @schema = row, schema
       @value_cache = Hash.new { |h, key|
         # If it's a number and not one of our columns, assume it's an index
-        if key.kind_of?(Fixnum) and !column_indices.key?(key)
+        if key.kind_of?(Integer) and !column_indices.key?(key)
           column_name = column_names[key]
           column_index = key
         else
